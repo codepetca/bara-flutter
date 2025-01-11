@@ -1,6 +1,26 @@
+import 'package:bara_flutter/services/supabase_auth.dart';
+import 'package:bara_flutter/views/app/app.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
+import 'package:watch_it/watch_it.dart';
 
-void main() {
+Future<void> main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+
+  // Load env file
+  await dotenv.load();
+
+  // Initialize Supabase
+  await Supabase.initialize(
+    url: dotenv.env['SUPABASE_URL']!,
+    anonKey: dotenv.env['SUPABASE_ANON_KEY']!,
+  );
+
+  // Register the services
+  di.registerSingleton<SupabaseAuth>(SupabaseAuth());
+
+  // Run the app
   runApp(const MainApp());
 }
 
@@ -9,12 +29,8 @@ class MainApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const MaterialApp(
-      home: Scaffold(
-        body: Center(
-          child: Text('Hello World!'),
-        ),
-      ),
+    return MaterialApp(
+      home: App(),
     );
   }
 }

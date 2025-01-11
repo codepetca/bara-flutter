@@ -1,14 +1,14 @@
 import 'package:bara_flutter/services/supabase_auth.dart';
 import 'package:bara_flutter/util/validators.dart';
 import 'package:flutter/material.dart';
-import 'package:get_it/get_it.dart';
+import 'package:watch_it/watch_it.dart';
 
 class SignInView extends StatelessWidget {
   SignInView({super.key});
 
   final _formKey = GlobalKey<FormState>();
   final _emailController = TextEditingController();
-  final _authService = GetIt.instance<SupabaseAuth>();
+  final _authService = di<SupabaseAuth>();
 
   void _signIn(BuildContext context) {
     if (_formKey.currentState!.validate()) {
@@ -31,6 +31,7 @@ class SignInView extends StatelessWidget {
           key: _formKey,
           child: Column(
             children: [
+              Spacer(),
               TextFormField(
                 controller: _emailController,
                 decoration: InputDecoration(
@@ -38,10 +39,16 @@ class SignInView extends StatelessWidget {
                 ),
                 validator: validateEmail,
               ),
-              SizedBox(height: 20),
-              ElevatedButton(
-                onPressed: () => _signIn(context),
-                child: Text('Sign In'),
+              Spacer(),
+              Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: SizedBox(
+                  width: double.infinity,
+                  child: ElevatedButton(
+                    onPressed: () => _signIn(context),
+                    child: Text('Sign In'),
+                  ),
+                ),
               ),
             ],
           ),

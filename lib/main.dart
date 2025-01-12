@@ -1,5 +1,8 @@
 import 'package:bara_flutter/services/supabase_auth.dart';
 import 'package:bara_flutter/views/app/app.dart';
+import 'package:bara_flutter/views/app/settings_view.dart';
+import 'package:bara_flutter/views/app/sign_in_view.dart';
+import 'package:bara_flutter/views/student/student_home_view.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
@@ -30,7 +33,17 @@ class MainApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      home: App(),
+      title: 'Flutter Demo',
+      theme: ThemeData(
+        primarySwatch: Colors.blue,
+      ),
+      initialRoute: '/',
+      routes: {
+        '/': (context) => App(),
+        '/sign_in': (context) => SignInView(),
+        '/student_home': (context) => StudentHomeView(),
+        '/settings': (context) => SettingsView(),
+      },
     );
   }
 }

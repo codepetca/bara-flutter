@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 
 class SupabaseAuth extends ChangeNotifier {
   // TODO: Simplify this to valuenotifier
@@ -22,6 +23,10 @@ class SupabaseAuth extends ChangeNotifier {
   Future<void> signIn(String email) async {
     // Sign in logic
     print("Signing in with email: $email");
+
+    await Supabase.instance.client.auth
+        .signInWithOtp(email: 'valid.email@supabase.io');
+
     isAuthenticating = true;
     await Future.delayed(const Duration(seconds: 2));
     isAuthenticated = true;

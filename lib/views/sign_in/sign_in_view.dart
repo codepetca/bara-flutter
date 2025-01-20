@@ -1,5 +1,7 @@
+import 'package:bara_flutter/main.dart';
 import 'package:bara_flutter/services/supabase_auth.dart';
 import 'package:bara_flutter/util/validators.dart';
+import 'package:bara_flutter/views/sign_in/sign_in_button.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:bara_flutter/util/shared_preferences_x.dart';
@@ -24,28 +26,18 @@ class _SignInViewState extends State<SignInView> {
     _loadSignInEmail();
   }
 
-  Future<void> _loadSignInEmail() async {
-    prefs = await SharedPreferences.getInstance();
-    final savedEmail = prefs.getSignInEmail();
-    if (savedEmail != null) {
-      setState(() {
-        _emailController.text = savedEmail;
-      });
-    }
-  }
-
-  void _onSignIn(BuildContext context) async {
-    if (_formKey.currentState!.validate()) {
-      _supabaseAuth.signIn(_emailController.text);
-
-      // Save email to SharedPreferences
-      await prefs.saveSignInEmail(_emailController.text);
-    }
-  }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar: AppBar(
+        title: Text(''),
+        leading: IconButton(
+          onPressed: () {
+            Navigator.pushNamed(context, Routes.info);
+          },
+          icon: Icon(Icons.info_outline),
+        ),
+      ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Form(
@@ -62,20 +54,30 @@ class _SignInViewState extends State<SignInView> {
                 validator: validateEmail,
               ),
               Spacer(),
-              Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: SizedBox(
-                  width: double.infinity,
-                  child: ElevatedButton(
-                    onPressed: () => _onSignIn(context),
-                    child: Text('Sign In'),
-                  ),
-                ),
-              ),
+              SignInButton(action: _onSignIn),
             ],
           ),
         ),
       ),
     );
+  }
+
+  Future<void> _loadSignInEmail() async {
+    prefs = await SharedPreferences.getInstance();
+    final savedEmail = prefs.getSignInEmail();
+    if (savedEmail != null) {
+      setState(() {
+        _emailController.text = savedEmail;
+      });
+    }
+  }
+
+  void _onSignIn() async {
+    if (_formKey.currentState!.validate()) {
+      _supabaseAuth.signIn(_emailController.text);
+
+      // Save email to SharedPreferences
+      await prefs.saveSignInEmail(_emailController.text);
+    }
   }
 }

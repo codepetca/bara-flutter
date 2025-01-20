@@ -9,20 +9,43 @@ class SectionDetail extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+
     return Column(
       children: [
         Text(
-          studentSection.sectionCode,
-          style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+          studentSection.block,
+          style: theme.textTheme.headlineMedium!
+              .copyWith(fontWeight: FontWeight.bold),
         ),
         Text(
+          studentSection.sectionCode,
+          style: theme.textTheme.headlineMedium,
+        ),
+        SizedBox(height: 8),
+        Text(
           'Start ${studentSection.startTime.formattedTimeShort}',
-          style: TextStyle(fontSize: 16),
+          style: theme.textTheme.headlineSmall,
         ),
         Text(
           'End ${studentSection.endTime.formattedTimeShort}',
-          style: TextStyle(fontSize: 16),
+          style: theme.textTheme.headlineSmall,
         ),
+        SizedBox(height: 8),
+        studentSection.scanSubmitted
+            ? Icon(
+                Icons.check_outlined,
+                color: Colors.green,
+                size: 40,
+              )
+            : Opacity(
+                opacity: 0.5,
+                child: Icon(
+                  Icons.close_outlined,
+                  color: Colors.grey,
+                  size: 40,
+                ),
+              ),
       ],
     );
   }

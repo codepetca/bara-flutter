@@ -2,6 +2,7 @@ import 'package:bara_flutter/services/supabase_auth.dart';
 import 'package:bara_flutter/services/timer_service.dart';
 import 'package:bara_flutter/views/app/app.dart';
 import 'package:bara_flutter/views/app/profile_view.dart';
+import 'package:bara_flutter/views/sign_in/info_view.dart';
 import 'package:bara_flutter/views/sign_in/sign_in_view.dart';
 import 'package:bara_flutter/views/student/student_home.dart';
 import 'package:flutter/material.dart';
@@ -45,6 +46,7 @@ class MainApp extends StatelessWidget {
         Routes.signIn: (context) => SignInView(),
         Routes.studentHome: (context) => StudentHome(),
         Routes.profile: (context) => ProfileView(),
+        Routes.info: (context) => InfoView(),
       },
     );
   }
@@ -55,4 +57,5 @@ class Routes {
   static const String signIn = '/sign_in';
   static const String studentHome = '/student_home';
   static const String profile = '/profile';
+  static const String info = '/info';
 }

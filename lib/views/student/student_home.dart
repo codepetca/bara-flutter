@@ -1,6 +1,7 @@
 import 'package:bara_flutter/main.dart';
 import 'package:bara_flutter/models/student_section.dart';
 import 'package:bara_flutter/services/timer_service.dart';
+import 'package:bara_flutter/views/student/StudentScanButton.dart';
 import 'package:bara_flutter/views/student/main_content.dart';
 import 'package:flutter/material.dart';
 import 'package:logging/logging.dart';
@@ -34,6 +35,8 @@ class _StudentHomeState extends State<StudentHome> {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+
     return Scaffold(
       appBar: AppBar(
         actions: [
@@ -55,15 +58,10 @@ class _StudentHomeState extends State<StudentHome> {
               upcomingSection: upcomingSection,
             ),
             Spacer(),
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 16.0),
-              child: SizedBox(
-                width: double.infinity,
-                child: ElevatedButton(
-                  onPressed: scanReady ? _startNFCReading : null,
-                  child: Text('Begin Scan'),
-                ),
-              ),
+            // Scan button
+            StudentScanButton(
+              action: _startNFCReading,
+              scanReady: scanReady,
             ),
             SizedBox(height: 16),
           ],

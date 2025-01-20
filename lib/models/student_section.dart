@@ -1,4 +1,5 @@
 import 'package:bara_flutter/models/generated_classes.dart';
+import 'package:bara_flutter/util/datetime_x.dart';
 
 class StudentSection {
   final DateTime date;
@@ -9,7 +10,9 @@ class StudentSection {
   final String studentId;
   final String block;
 
-  const StudentSection({
+  var scanSubmitted = false;
+
+  StudentSection({
     required this.date,
     required this.studentNumber,
     required this.sectionCode,
@@ -17,6 +20,7 @@ class StudentSection {
     required this.endTime,
     required this.studentId,
     required this.block,
+    this.scanSubmitted = false,
   });
 
   // Factory constructor to create a StudentSection from VForStudentHome
@@ -26,8 +30,8 @@ class StudentSection {
       studentId: vForStudentHome.studentId!,
       studentNumber: vForStudentHome.studentNumber!,
       sectionCode: vForStudentHome.sectionCode!,
-      startTime: vForStudentHome.startTime!,
-      endTime: vForStudentHome.endTime!,
+      startTime: vForStudentHome.startTime!.toToday(),
+      endTime: vForStudentHome.endTime!.toToday(),
       block: vForStudentHome.block!,
     );
   }

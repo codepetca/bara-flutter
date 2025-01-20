@@ -10,7 +10,7 @@ class GuestView extends StatelessWidget {
       children: [
         Spacer(),
         Text(
-          'You may have logged in with the wrong account.',
+          'You may have signed-in incorrectly.',
           style: TextStyle(fontSize: 16), // Adjust text style as needed
           textAlign: TextAlign.center, // Align text to the center
         ),

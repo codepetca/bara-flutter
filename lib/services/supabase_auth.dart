@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:logging/logging.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 class SupabaseAuth extends ChangeNotifier {
+  final log = Logger('SupabaseAuth');
+
   // TODO: Simplify this to valuenotifier
   bool get isAuthenticated => _isAuthenticated;
   bool get isAuthenticating => _isAuthenticating;
@@ -10,7 +13,7 @@ class SupabaseAuth extends ChangeNotifier {
   bool _isAuthenticated = false;
   set isAuthenticated(bool value) {
     _isAuthenticated = value;
-    print("isAuthenticated: $value");
+    log.info("isAuthenticated: $value");
     notifyListeners();
   }
 
@@ -22,7 +25,7 @@ class SupabaseAuth extends ChangeNotifier {
 
   Future<void> signIn(String email) async {
     // Sign in logic
-    print("Signing in with email: $email");
+    log.info("Signing in with email: $email");
 
     await Supabase.instance.client.auth
         .signInWithOtp(email: 'valid.email@supabase.io');
@@ -35,7 +38,7 @@ class SupabaseAuth extends ChangeNotifier {
 
   void signOut() {
     // Sign out logic
-    print("Signing out...");
+    log.info("Signing out...");
     isAuthenticated = false;
   }
 }

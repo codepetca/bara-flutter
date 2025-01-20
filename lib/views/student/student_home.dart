@@ -1,15 +1,19 @@
+import 'package:bara_flutter/main.dart';
 import 'package:flutter/material.dart';
+import 'package:logging/logging.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:bara_flutter/services/supabase_x.dart';
 
-class StudentHomeView extends StatefulWidget {
-  const StudentHomeView({super.key});
+class StudentHome extends StatefulWidget {
+  const StudentHome({super.key});
 
   @override
-  State<StudentHomeView> createState() => _StudentHomeViewState();
+  State<StudentHome> createState() => _StudentHomeState();
 }
 
-class _StudentHomeViewState extends State<StudentHomeView> {
+class _StudentHomeState extends State<StudentHome> {
+  final log = Logger('StudentHome');
+
   @override
   void initState() {
     super.initState();
@@ -24,7 +28,7 @@ class _StudentHomeViewState extends State<StudentHomeView> {
           IconButton(
             icon: Icon(Icons.person),
             onPressed: () {
-              Navigator.pushNamed(context, '/settings');
+              Navigator.pushNamed(context, Routes.profile);
             },
           ),
         ],
@@ -36,17 +40,7 @@ class _StudentHomeViewState extends State<StudentHomeView> {
             Spacer(),
             Text('Welcome, Student!'),
             Spacer(),
-            // Fetch student data button
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 16.0),
-              child: SizedBox(
-                width: double.infinity,
-                child: ElevatedButton(
-                  onPressed: _onFetchStudentData,
-                  child: Text('Fetch Student Data'),
-                ),
-              ),
-            ),
+
             // Scan button
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 16.0),
@@ -68,14 +62,14 @@ class _StudentHomeViewState extends State<StudentHomeView> {
   // TODO: Use actual student ID and date
   // save fetched data to shared preferences
   Future<void> _onFetchStudentData() async {
-    print('Fetching student data...');
+    log.info('Fetching student data...');
     final studentId = '56ad7055-3d70-4b53-8e4f-8d24832a285f';
     final date = '2025-01-10';
-    Supabase.instance.fetchStudentHomeData(studentId, date);
+    final studentSections =
+        await Supabase.instance.fetchStudentHomeData(studentId, date);
   }
 
   void _onBeginScan() {
-    print('Begin Scan');
-    Supabase.instance.fetchTeachers();
+    throw UnimplementedError();
   }
 }

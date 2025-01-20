@@ -1,0 +1,39 @@
+import 'package:bara_flutter/models/generated_classes.dart';
+
+class StudentSection {
+  final DateTime date;
+  final String studentNumber;
+  final String sectionCode;
+  final DateTime startTime;
+  final DateTime endTime;
+  final String studentId;
+  final String block;
+
+  const StudentSection({
+    required this.date,
+    required this.studentNumber,
+    required this.sectionCode,
+    required this.startTime,
+    required this.endTime,
+    required this.studentId,
+    required this.block,
+  });
+
+  // Factory constructor to create a StudentSection from VForStudentHome
+  factory StudentSection.fromVForStudentHome(VForStudentHome vForStudentHome) {
+    return StudentSection(
+      date: vForStudentHome.date!,
+      studentId: vForStudentHome.studentId!,
+      studentNumber: vForStudentHome.studentNumber!,
+      sectionCode: vForStudentHome.sectionCode!,
+      startTime: vForStudentHome.startTime!,
+      endTime: vForStudentHome.endTime!,
+      block: vForStudentHome.block!,
+    );
+  }
+
+  @override
+  String toString() {
+    return 'StudentSection{date: $date, studentNumber: $studentNumber, sectionCode: $sectionCode, startTime: $startTime, endTime: $endTime, studentId: $studentId, block: $block}';
+  }
+}

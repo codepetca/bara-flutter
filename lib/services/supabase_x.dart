@@ -1,24 +1,38 @@
 import 'package:bara_flutter/models/generated_classes.dart';
+import 'package:bara_flutter/models/student_section.dart';
+import 'package:logging/logging.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
-import 'package:uuid/uuid.dart';
 
 extension SupabaseX on Supabase {
+  Logger get log => Logger('SupabaseX');
+
   Future<void> fetchTeachers() async {
-    print('Fetching teachers...');
+    log.info('Fetching teachers...');
 
     final teachers =
         await client.teacher.select().withConverter(Teacher.converter);
-    print(teachers.map((teacher) => teacher.toJson()).toList());
+    log.info(teachers.map((teacher) => teacher.toJson()).toList().toString());
   }
 
-  Future<void> fetchStudentHomeData(String studentId, String date) async {
-    final studentSections = await client.v_for_student_home
+  Future<List<StudentSection>> fetchStudentHomeData(
+      String studentId, String date) async {
+    log.info(
+        'Fetching student home data for studentId: $studentId on date: $date');
+
+    final vForStudentHomeList = await client.v_for_student_home
         .select()
         .eq("student_id", studentId)
         .eq("date", date)
         .limit(20)
         .withConverter(VForStudentHome.converter);
 
-    print(studentSections.map((section) => section.toJson()).toList());
+    final studentSections = vForStudentHomeList
+        .map((vForStudentHome) =>
+            StudentSection.fromVForStudentHome(vForStudentHome))
+        .toList();
+    for (var studentSection in studentSections) {
+      log.info(studentSection.toString());
+    }
+    return studentSections;
   }
 }

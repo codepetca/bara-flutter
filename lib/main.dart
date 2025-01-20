@@ -1,8 +1,8 @@
 import 'package:bara_flutter/services/supabase_auth.dart';
 import 'package:bara_flutter/views/app/app.dart';
-import 'package:bara_flutter/views/app/settings_view.dart';
-import 'package:bara_flutter/views/app/sign_in_view.dart';
-import 'package:bara_flutter/views/student/student_home_view.dart';
+import 'package:bara_flutter/views/app/profile_view.dart';
+import 'package:bara_flutter/views/sign_in/sign_in_view.dart';
+import 'package:bara_flutter/views/student/student_home.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
@@ -39,11 +39,18 @@ class MainApp extends StatelessWidget {
       ),
       initialRoute: '/',
       routes: {
-        '/': (context) => App(),
-        '/sign_in': (context) => SignInView(),
-        '/student_home': (context) => StudentHomeView(),
-        '/settings': (context) => SettingsView(),
+        Routes.root: (context) => App(),
+        Routes.signIn: (context) => SignInView(),
+        Routes.studentHome: (context) => StudentHome(),
+        Routes.profile: (context) => ProfileView(),
       },
     );
   }
+}
+
+class Routes {
+  static const String root = '/';
+  static const String signIn = '/sign_in';
+  static const String studentHome = '/student_home';
+  static const String profile = '/profile';
 }

@@ -5,8 +5,8 @@ import 'package:supabase_auth_ui/supabase_auth_ui.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:watch_it/watch_it.dart';
 
-class SettingsView extends StatelessWidget {
-  SettingsView({super.key});
+class ProfileView extends StatelessWidget {
+  ProfileView({super.key});
 
   final supabaseAuth = di.get<SupabaseAuth>();
 

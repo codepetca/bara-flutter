@@ -354,6 +354,7 @@ class VForStudentHome implements SupadartClass<VForStudentHome> {
   final String? sectionCode;
   final DateTime? startTime;
   final DateTime? endTime;
+  final String? block;
   final String? studentId;
 
   const VForStudentHome({
@@ -362,6 +363,7 @@ class VForStudentHome implements SupadartClass<VForStudentHome> {
     this.sectionCode,
     this.startTime,
     this.endTime,
+    this.block,
     this.studentId,
   });
 
@@ -371,6 +373,7 @@ class VForStudentHome implements SupadartClass<VForStudentHome> {
   static String get c_sectionCode => 'section_code';
   static String get c_startTime => 'start_time';
   static String get c_endTime => 'end_time';
+  static String get c_block => 'block';
   static String get c_studentId => 'student_id';
 
   static List<VForStudentHome> converter(List<Map<String, dynamic>> data) {
@@ -387,6 +390,7 @@ class VForStudentHome implements SupadartClass<VForStudentHome> {
     String? sectionCode,
     DateTime? startTime,
     DateTime? endTime,
+    String? block,
     String? studentId,
   }) {
     return {
@@ -397,6 +401,7 @@ class VForStudentHome implements SupadartClass<VForStudentHome> {
         'start_time': DateFormat('HH:mm:ss.SSS').format(startTime),
       if (endTime != null)
         'end_time': DateFormat('HH:mm:ss.SSS').format(endTime),
+      if (block != null) 'block': block,
       if (studentId != null) 'student_id': studentId,
     };
   }
@@ -407,6 +412,7 @@ class VForStudentHome implements SupadartClass<VForStudentHome> {
     String? sectionCode,
     DateTime? startTime,
     DateTime? endTime,
+    String? block,
     String? studentId,
   }) {
     return _generateMap(
@@ -415,6 +421,7 @@ class VForStudentHome implements SupadartClass<VForStudentHome> {
       sectionCode: sectionCode,
       startTime: startTime,
       endTime: endTime,
+      block: block,
       studentId: studentId,
     );
   }
@@ -425,6 +432,7 @@ class VForStudentHome implements SupadartClass<VForStudentHome> {
     String? sectionCode,
     DateTime? startTime,
     DateTime? endTime,
+    String? block,
     String? studentId,
   }) {
     return _generateMap(
@@ -433,6 +441,7 @@ class VForStudentHome implements SupadartClass<VForStudentHome> {
       sectionCode: sectionCode,
       startTime: startTime,
       endTime: endTime,
+      block: block,
       studentId: studentId,
     );
   }
@@ -453,6 +462,7 @@ class VForStudentHome implements SupadartClass<VForStudentHome> {
       endTime: jsonn['end_time'] != null
           ? DateTime.parse("1970-01-01T${jsonn['end_time']}").toLocal()
           : DateTime.fromMillisecondsSinceEpoch(0),
+      block: jsonn['block'] != null ? jsonn['block'].toString() : '',
       studentId:
           jsonn['student_id'] != null ? jsonn['student_id'].toString() : '',
     );
@@ -465,6 +475,7 @@ class VForStudentHome implements SupadartClass<VForStudentHome> {
       sectionCode: sectionCode,
       startTime: startTime,
       endTime: endTime,
+      block: block,
       studentId: studentId,
     );
   }
@@ -1577,7 +1588,9 @@ class VForTeacherHome implements SupadartClass<VForTeacherHome> {
   final String? studentId;
   final String? firstName;
   final String? lastName;
+  final String? studentNumber;
   final DateTime? entryTime;
+  final String? block;
 
   const VForTeacherHome({
     this.teacherId,
@@ -1586,7 +1599,9 @@ class VForTeacherHome implements SupadartClass<VForTeacherHome> {
     this.studentId,
     this.firstName,
     this.lastName,
+    this.studentNumber,
     this.entryTime,
+    this.block,
   });
 
   static String get table_name => 'v_for_teacher_home';
@@ -1596,7 +1611,9 @@ class VForTeacherHome implements SupadartClass<VForTeacherHome> {
   static String get c_studentId => 'student_id';
   static String get c_firstName => 'first_name';
   static String get c_lastName => 'last_name';
+  static String get c_studentNumber => 'student_number';
   static String get c_entryTime => 'entry_time';
+  static String get c_block => 'block';
 
   static List<VForTeacherHome> converter(List<Map<String, dynamic>> data) {
     return data.map(VForTeacherHome.fromJson).toList();
@@ -1613,7 +1630,9 @@ class VForTeacherHome implements SupadartClass<VForTeacherHome> {
     String? studentId,
     String? firstName,
     String? lastName,
+    String? studentNumber,
     DateTime? entryTime,
+    String? block,
   }) {
     return {
       if (teacherId != null) 'teacher_id': teacherId,
@@ -1622,7 +1641,9 @@ class VForTeacherHome implements SupadartClass<VForTeacherHome> {
       if (studentId != null) 'student_id': studentId,
       if (firstName != null) 'first_name': firstName,
       if (lastName != null) 'last_name': lastName,
+      if (studentNumber != null) 'student_number': studentNumber,
       if (entryTime != null) 'entry_time': entryTime.toUtc().toIso8601String(),
+      if (block != null) 'block': block,
     };
   }
 
@@ -1633,7 +1654,9 @@ class VForTeacherHome implements SupadartClass<VForTeacherHome> {
     String? studentId,
     String? firstName,
     String? lastName,
+    String? studentNumber,
     DateTime? entryTime,
+    String? block,
   }) {
     return _generateMap(
       teacherId: teacherId,
@@ -1642,7 +1665,9 @@ class VForTeacherHome implements SupadartClass<VForTeacherHome> {
       studentId: studentId,
       firstName: firstName,
       lastName: lastName,
+      studentNumber: studentNumber,
       entryTime: entryTime,
+      block: block,
     );
   }
 
@@ -1653,7 +1678,9 @@ class VForTeacherHome implements SupadartClass<VForTeacherHome> {
     String? studentId,
     String? firstName,
     String? lastName,
+    String? studentNumber,
     DateTime? entryTime,
+    String? block,
   }) {
     return _generateMap(
       teacherId: teacherId,
@@ -1662,7 +1689,9 @@ class VForTeacherHome implements SupadartClass<VForTeacherHome> {
       studentId: studentId,
       firstName: firstName,
       lastName: lastName,
+      studentNumber: studentNumber,
       entryTime: entryTime,
+      block: block,
     );
   }
 
@@ -1680,9 +1709,13 @@ class VForTeacherHome implements SupadartClass<VForTeacherHome> {
       firstName:
           jsonn['first_name'] != null ? jsonn['first_name'].toString() : '',
       lastName: jsonn['last_name'] != null ? jsonn['last_name'].toString() : '',
+      studentNumber: jsonn['student_number'] != null
+          ? jsonn['student_number'].toString()
+          : '',
       entryTime: jsonn['entry_time'] != null
           ? DateTime.parse(jsonn['entry_time'].toString())
           : DateTime.fromMillisecondsSinceEpoch(0),
+      block: jsonn['block'] != null ? jsonn['block'].toString() : '',
     );
   }
 
@@ -1694,7 +1727,9 @@ class VForTeacherHome implements SupadartClass<VForTeacherHome> {
       studentId: studentId,
       firstName: firstName,
       lastName: lastName,
+      studentNumber: studentNumber,
       entryTime: entryTime,
+      block: block,
     );
   }
 }

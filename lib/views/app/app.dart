@@ -1,7 +1,7 @@
 import 'package:bara_flutter/services/supabase_auth.dart';
 import 'package:bara_flutter/views/app/loading_view.dart';
-import 'package:bara_flutter/views/app/sign_in_view.dart';
-import 'package:bara_flutter/views/student/student_home_view.dart';
+import 'package:bara_flutter/views/sign_in/sign_in_view.dart';
+import 'package:bara_flutter/views/student/student_home.dart';
 import 'package:flutter/material.dart';
 import 'package:watch_it/watch_it.dart';
 
@@ -19,7 +19,7 @@ class App extends WatchingWidget {
     } else if (!isAuthenticated) {
       return SignInView();
     } else {
-      return StudentHomeView();
+      return StudentHome();
     }
   }
 }

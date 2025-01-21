@@ -350,31 +350,34 @@ class TagScan implements SupadartClass<TagScan> {
 
 class VForStudentHome implements SupadartClass<VForStudentHome> {
   final DateTime? date;
+  final String? studentId;
   final String? studentNumber;
   final String? sectionCode;
+  final String? block;
   final DateTime? startTime;
   final DateTime? endTime;
-  final String? block;
-  final String? studentId;
+  final DateTime? entryTime;
 
   const VForStudentHome({
     this.date,
+    this.studentId,
     this.studentNumber,
     this.sectionCode,
+    this.block,
     this.startTime,
     this.endTime,
-    this.block,
-    this.studentId,
+    this.entryTime,
   });
 
   static String get table_name => 'v_for_student_home';
   static String get c_date => 'date';
+  static String get c_studentId => 'student_id';
   static String get c_studentNumber => 'student_number';
   static String get c_sectionCode => 'section_code';
+  static String get c_block => 'block';
   static String get c_startTime => 'start_time';
   static String get c_endTime => 'end_time';
-  static String get c_block => 'block';
-  static String get c_studentId => 'student_id';
+  static String get c_entryTime => 'entry_time';
 
   static List<VForStudentHome> converter(List<Map<String, dynamic>> data) {
     return data.map(VForStudentHome.fromJson).toList();
@@ -386,63 +389,69 @@ class VForStudentHome implements SupadartClass<VForStudentHome> {
 
   static Map<String, dynamic> _generateMap({
     DateTime? date,
+    String? studentId,
     String? studentNumber,
     String? sectionCode,
+    String? block,
     DateTime? startTime,
     DateTime? endTime,
-    String? block,
-    String? studentId,
+    DateTime? entryTime,
   }) {
     return {
       if (date != null) 'date': date.toIso8601String(),
+      if (studentId != null) 'student_id': studentId,
       if (studentNumber != null) 'student_number': studentNumber,
       if (sectionCode != null) 'section_code': sectionCode,
+      if (block != null) 'block': block,
       if (startTime != null)
         'start_time': DateFormat('HH:mm:ss.SSS').format(startTime),
       if (endTime != null)
         'end_time': DateFormat('HH:mm:ss.SSS').format(endTime),
-      if (block != null) 'block': block,
-      if (studentId != null) 'student_id': studentId,
+      if (entryTime != null) 'entry_time': entryTime.toUtc().toIso8601String(),
     };
   }
 
   static Map<String, dynamic> insert({
     DateTime? date,
+    String? studentId,
     String? studentNumber,
     String? sectionCode,
+    String? block,
     DateTime? startTime,
     DateTime? endTime,
-    String? block,
-    String? studentId,
+    DateTime? entryTime,
   }) {
     return _generateMap(
       date: date,
+      studentId: studentId,
       studentNumber: studentNumber,
       sectionCode: sectionCode,
+      block: block,
       startTime: startTime,
       endTime: endTime,
-      block: block,
-      studentId: studentId,
+      entryTime: entryTime,
     );
   }
 
   static Map<String, dynamic> update({
     DateTime? date,
+    String? studentId,
     String? studentNumber,
     String? sectionCode,
+    String? block,
     DateTime? startTime,
     DateTime? endTime,
-    String? block,
-    String? studentId,
+    DateTime? entryTime,
   }) {
     return _generateMap(
       date: date,
+      studentId: studentId,
       studentNumber: studentNumber,
       sectionCode: sectionCode,
+      block: block,
       startTime: startTime,
       endTime: endTime,
-      block: block,
-      studentId: studentId,
+      entryTime: entryTime,
     );
   }
 
@@ -451,32 +460,36 @@ class VForStudentHome implements SupadartClass<VForStudentHome> {
       date: jsonn['date'] != null
           ? DateTime.parse(jsonn['date'].toString())
           : DateTime.fromMillisecondsSinceEpoch(0),
+      studentId:
+          jsonn['student_id'] != null ? jsonn['student_id'].toString() : '',
       studentNumber: jsonn['student_number'] != null
           ? jsonn['student_number'].toString()
           : '',
       sectionCode:
           jsonn['section_code'] != null ? jsonn['section_code'].toString() : '',
+      block: jsonn['block'] != null ? jsonn['block'].toString() : '',
       startTime: jsonn['start_time'] != null
           ? DateTime.parse("1970-01-01T${jsonn['start_time']}").toLocal()
           : DateTime.fromMillisecondsSinceEpoch(0),
       endTime: jsonn['end_time'] != null
           ? DateTime.parse("1970-01-01T${jsonn['end_time']}").toLocal()
           : DateTime.fromMillisecondsSinceEpoch(0),
-      block: jsonn['block'] != null ? jsonn['block'].toString() : '',
-      studentId:
-          jsonn['student_id'] != null ? jsonn['student_id'].toString() : '',
+      entryTime: jsonn['entry_time'] != null
+          ? DateTime.parse(jsonn['entry_time'].toString())
+          : DateTime.fromMillisecondsSinceEpoch(0),
     );
   }
 
   Map<String, dynamic> toJson() {
     return _generateMap(
       date: date,
+      studentId: studentId,
       studentNumber: studentNumber,
       sectionCode: sectionCode,
+      block: block,
       startTime: startTime,
       endTime: endTime,
-      block: block,
-      studentId: studentId,
+      entryTime: entryTime,
     );
   }
 }

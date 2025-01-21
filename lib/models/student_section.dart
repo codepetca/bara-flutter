@@ -3,23 +3,25 @@ import 'package:bara_flutter/util/datetime_x.dart';
 
 class StudentSection {
   final DateTime date;
+  final String studentId;
   final String studentNumber;
+  final String block;
   final String sectionCode;
   final DateTime startTime;
   final DateTime endTime;
-  final String studentId;
-  final String block;
+  final DateTime? entryTime;
 
   var scanSubmitted = false;
 
   StudentSection({
     required this.date,
+    required this.studentId,
     required this.studentNumber,
+    required this.block,
     required this.sectionCode,
     required this.startTime,
     required this.endTime,
-    required this.studentId,
-    required this.block,
+    this.entryTime,
     this.scanSubmitted = false,
   });
 
@@ -29,10 +31,11 @@ class StudentSection {
       date: vForStudentHome.date!,
       studentId: vForStudentHome.studentId!,
       studentNumber: vForStudentHome.studentNumber!,
+      block: vForStudentHome.block!,
       sectionCode: vForStudentHome.sectionCode!,
       startTime: vForStudentHome.startTime!.toToday(),
       endTime: vForStudentHome.endTime!.toToday(),
-      block: vForStudentHome.block!,
+      entryTime: vForStudentHome.entryTime,
     );
   }
 

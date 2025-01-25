@@ -1,3 +1,4 @@
+import 'package:bara_flutter/models/app_user.dart';
 import 'package:bara_flutter/services/supabase_auth.dart';
 import 'package:bara_flutter/views/app/loading_view.dart';
 import 'package:bara_flutter/views/sign_in/sign_in_view.dart';
@@ -12,9 +13,8 @@ class App extends WatchingWidget {
   Widget build(BuildContext context) {
     var isAuthenticated =
         watchPropertyValue((SupabaseAuth auth) => auth.isAuthenticated);
-    var isAuthenticating =
-        watchPropertyValue((SupabaseAuth auth) => auth.isAuthenticating);
-    if (isAuthenticating) {
+    var isLoading = watchPropertyValue((SupabaseAuth auth) => auth.isLoading);
+    if (isLoading) {
       return LoadingView();
     } else if (!isAuthenticated) {
       return SignInView();

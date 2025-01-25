@@ -2,10 +2,10 @@ import 'package:flutter/material.dart';
 
 class StudentScanButton extends StatelessWidget {
   final bool scanReady;
-  final void Function() action;
+  final void Function() onPressed;
 
   const StudentScanButton(
-      {super.key, required this.action, required this.scanReady});
+      {super.key, required this.onPressed, required this.scanReady});
 
   @override
   Widget build(BuildContext context) {
@@ -17,7 +17,7 @@ class StudentScanButton extends StatelessWidget {
         child: Opacity(
           opacity: scanReady ? 1 : 0.3,
           child: ElevatedButton(
-            onPressed: scanReady ? action : null,
+            onPressed: scanReady ? onPressed : null,
             child: Padding(
               padding: const EdgeInsets.symmetric(vertical: 22.0),
               child: Text(

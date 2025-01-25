@@ -40,7 +40,6 @@ extension SupadartClient on SupabaseClient {
   SupabaseQueryBuilder get event => from('event');
   SupabaseQueryBuilder get tag_scan => from('tag_scan');
   SupabaseQueryBuilder get v_for_student_home => from('v_for_student_home');
-  SupabaseQueryBuilder get profiles => from('profiles');
   SupabaseQueryBuilder get block => from('block');
   SupabaseQueryBuilder get student => from('student');
   SupabaseQueryBuilder get teacher_assignment => from('teacher_assignment');
@@ -48,6 +47,7 @@ extension SupadartClient on SupabaseClient {
       from('v_attendance_section_tags_times');
   SupabaseQueryBuilder get section => from('section');
   SupabaseQueryBuilder get student_enrolment => from('student_enrolment');
+  SupabaseQueryBuilder get v_profile => from('v_profile');
   SupabaseQueryBuilder get calendar => from('calendar');
   SupabaseQueryBuilder get tag_assignment => from('tag_assignment');
   SupabaseQueryBuilder get v_for_teacher_home => from('v_for_teacher_home');
@@ -72,12 +72,14 @@ class Course implements SupadartClass<Course> {
   final DateTime createdAt;
   final String code;
   final String? name;
+  final bool? isTestData;
 
   const Course({
     required this.id,
     required this.createdAt,
     required this.code,
     this.name,
+    this.isTestData,
   });
 
   static String get table_name => 'course';
@@ -85,6 +87,7 @@ class Course implements SupadartClass<Course> {
   static String get c_createdAt => 'created_at';
   static String get c_code => 'code';
   static String get c_name => 'name';
+  static String get c_isTestData => 'is_test_data';
 
   static List<Course> converter(List<Map<String, dynamic>> data) {
     return data.map(Course.fromJson).toList();
@@ -99,12 +102,14 @@ class Course implements SupadartClass<Course> {
     DateTime? createdAt,
     String? code,
     String? name,
+    bool? isTestData,
   }) {
     return {
       if (id != null) 'id': id.toString(),
       if (createdAt != null) 'created_at': createdAt.toUtc().toIso8601String(),
       if (code != null) 'code': code,
       if (name != null) 'name': name,
+      if (isTestData != null) 'is_test_data': isTestData,
     };
   }
 
@@ -113,12 +118,14 @@ class Course implements SupadartClass<Course> {
     DateTime? createdAt,
     required String code,
     String? name,
+    bool? isTestData,
   }) {
     return _generateMap(
       id: id,
       createdAt: createdAt,
       code: code,
       name: name,
+      isTestData: isTestData,
     );
   }
 
@@ -127,12 +134,14 @@ class Course implements SupadartClass<Course> {
     DateTime? createdAt,
     String? code,
     String? name,
+    bool? isTestData,
   }) {
     return _generateMap(
       id: id,
       createdAt: createdAt,
       code: code,
       name: name,
+      isTestData: isTestData,
     );
   }
 
@@ -146,6 +155,8 @@ class Course implements SupadartClass<Course> {
           : DateTime.fromMillisecondsSinceEpoch(0),
       code: jsonn['code'] != null ? jsonn['code'].toString() : '',
       name: jsonn['name'] != null ? jsonn['name'].toString() : '',
+      isTestData:
+          jsonn['is_test_data'] != null ? jsonn['is_test_data'] as bool : false,
     );
   }
 
@@ -155,6 +166,7 @@ class Course implements SupadartClass<Course> {
       createdAt: createdAt,
       code: code,
       name: name,
+      isTestData: isTestData,
     );
   }
 }
@@ -163,17 +175,20 @@ class Event implements SupadartClass<Event> {
   final BigInt id;
   final DateTime createdAt;
   final String name;
+  final bool? isTestData;
 
   const Event({
     required this.id,
     required this.createdAt,
     required this.name,
+    this.isTestData,
   });
 
   static String get table_name => 'event';
   static String get c_id => 'id';
   static String get c_createdAt => 'created_at';
   static String get c_name => 'name';
+  static String get c_isTestData => 'is_test_data';
 
   static List<Event> converter(List<Map<String, dynamic>> data) {
     return data.map(Event.fromJson).toList();
@@ -187,11 +202,13 @@ class Event implements SupadartClass<Event> {
     BigInt? id,
     DateTime? createdAt,
     String? name,
+    bool? isTestData,
   }) {
     return {
       if (id != null) 'id': id.toString(),
       if (createdAt != null) 'created_at': createdAt.toUtc().toIso8601String(),
       if (name != null) 'name': name,
+      if (isTestData != null) 'is_test_data': isTestData,
     };
   }
 
@@ -199,11 +216,13 @@ class Event implements SupadartClass<Event> {
     BigInt? id,
     DateTime? createdAt,
     String? name,
+    bool? isTestData,
   }) {
     return _generateMap(
       id: id,
       createdAt: createdAt,
       name: name,
+      isTestData: isTestData,
     );
   }
 
@@ -211,11 +230,13 @@ class Event implements SupadartClass<Event> {
     BigInt? id,
     DateTime? createdAt,
     String? name,
+    bool? isTestData,
   }) {
     return _generateMap(
       id: id,
       createdAt: createdAt,
       name: name,
+      isTestData: isTestData,
     );
   }
 
@@ -228,6 +249,8 @@ class Event implements SupadartClass<Event> {
           ? DateTime.parse(jsonn['created_at'].toString())
           : DateTime.fromMillisecondsSinceEpoch(0),
       name: jsonn['name'] != null ? jsonn['name'].toString() : '',
+      isTestData:
+          jsonn['is_test_data'] != null ? jsonn['is_test_data'] as bool : false,
     );
   }
 
@@ -236,6 +259,7 @@ class Event implements SupadartClass<Event> {
       id: id,
       createdAt: createdAt,
       name: name,
+      isTestData: isTestData,
     );
   }
 }
@@ -246,6 +270,7 @@ class TagScan implements SupadartClass<TagScan> {
   final DateTime scanTime;
   final BigInt? tagId;
   final String studentId;
+  final bool? isTestData;
 
   const TagScan({
     required this.id,
@@ -253,6 +278,7 @@ class TagScan implements SupadartClass<TagScan> {
     required this.scanTime,
     this.tagId,
     required this.studentId,
+    this.isTestData,
   });
 
   static String get table_name => 'tag_scan';
@@ -261,6 +287,7 @@ class TagScan implements SupadartClass<TagScan> {
   static String get c_scanTime => 'scan_time';
   static String get c_tagId => 'tag_id';
   static String get c_studentId => 'student_id';
+  static String get c_isTestData => 'is_test_data';
 
   static List<TagScan> converter(List<Map<String, dynamic>> data) {
     return data.map(TagScan.fromJson).toList();
@@ -276,6 +303,7 @@ class TagScan implements SupadartClass<TagScan> {
     DateTime? scanTime,
     BigInt? tagId,
     String? studentId,
+    bool? isTestData,
   }) {
     return {
       if (id != null) 'id': id.toString(),
@@ -283,6 +311,7 @@ class TagScan implements SupadartClass<TagScan> {
       if (scanTime != null) 'scan_time': scanTime.toUtc().toIso8601String(),
       if (tagId != null) 'tag_id': tagId.toString(),
       if (studentId != null) 'student_id': studentId,
+      if (isTestData != null) 'is_test_data': isTestData,
     };
   }
 
@@ -292,6 +321,7 @@ class TagScan implements SupadartClass<TagScan> {
     required DateTime scanTime,
     BigInt? tagId,
     required String studentId,
+    bool? isTestData,
   }) {
     return _generateMap(
       id: id,
@@ -299,6 +329,7 @@ class TagScan implements SupadartClass<TagScan> {
       scanTime: scanTime,
       tagId: tagId,
       studentId: studentId,
+      isTestData: isTestData,
     );
   }
 
@@ -308,6 +339,7 @@ class TagScan implements SupadartClass<TagScan> {
     DateTime? scanTime,
     BigInt? tagId,
     String? studentId,
+    bool? isTestData,
   }) {
     return _generateMap(
       id: id,
@@ -315,6 +347,7 @@ class TagScan implements SupadartClass<TagScan> {
       scanTime: scanTime,
       tagId: tagId,
       studentId: studentId,
+      isTestData: isTestData,
     );
   }
 
@@ -334,6 +367,8 @@ class TagScan implements SupadartClass<TagScan> {
           : BigInt.from(0),
       studentId:
           jsonn['student_id'] != null ? jsonn['student_id'].toString() : '',
+      isTestData:
+          jsonn['is_test_data'] != null ? jsonn['is_test_data'] as bool : false,
     );
   }
 
@@ -344,6 +379,7 @@ class TagScan implements SupadartClass<TagScan> {
       scanTime: scanTime,
       tagId: tagId,
       studentId: studentId,
+      isTestData: isTestData,
     );
   }
 }
@@ -494,121 +530,6 @@ class VForStudentHome implements SupadartClass<VForStudentHome> {
   }
 }
 
-class Profiles implements SupadartClass<Profiles> {
-  final String? id;
-  final String? email;
-  final String? firstName;
-  final String? lastName;
-  final String? studentNumber;
-  final ROLE_ENUM? role;
-
-  const Profiles({
-    this.id,
-    this.email,
-    this.firstName,
-    this.lastName,
-    this.studentNumber,
-    this.role,
-  });
-
-  static String get table_name => 'profiles';
-  static String get c_id => 'id';
-  static String get c_email => 'email';
-  static String get c_firstName => 'first_name';
-  static String get c_lastName => 'last_name';
-  static String get c_studentNumber => 'student_number';
-  static String get c_role => 'role';
-
-  static List<Profiles> converter(List<Map<String, dynamic>> data) {
-    return data.map(Profiles.fromJson).toList();
-  }
-
-  static Profiles converterSingle(Map<String, dynamic> data) {
-    return Profiles.fromJson(data);
-  }
-
-  static Map<String, dynamic> _generateMap({
-    String? id,
-    String? email,
-    String? firstName,
-    String? lastName,
-    String? studentNumber,
-    ROLE_ENUM? role,
-  }) {
-    return {
-      if (id != null) 'id': id,
-      if (email != null) 'email': email,
-      if (firstName != null) 'first_name': firstName,
-      if (lastName != null) 'last_name': lastName,
-      if (studentNumber != null) 'student_number': studentNumber,
-      if (role != null) 'role': role.toString().split('.').last,
-    };
-  }
-
-  static Map<String, dynamic> insert({
-    String? id,
-    String? email,
-    String? firstName,
-    String? lastName,
-    String? studentNumber,
-    ROLE_ENUM? role,
-  }) {
-    return _generateMap(
-      id: id,
-      email: email,
-      firstName: firstName,
-      lastName: lastName,
-      studentNumber: studentNumber,
-      role: role,
-    );
-  }
-
-  static Map<String, dynamic> update({
-    String? id,
-    String? email,
-    String? firstName,
-    String? lastName,
-    String? studentNumber,
-    ROLE_ENUM? role,
-  }) {
-    return _generateMap(
-      id: id,
-      email: email,
-      firstName: firstName,
-      lastName: lastName,
-      studentNumber: studentNumber,
-      role: role,
-    );
-  }
-
-  factory Profiles.fromJson(Map<String, dynamic> jsonn) {
-    return Profiles(
-      id: jsonn['id'] != null ? jsonn['id'].toString() : '',
-      email: jsonn['email'] != null ? jsonn['email'].toString() : '',
-      firstName:
-          jsonn['first_name'] != null ? jsonn['first_name'].toString() : '',
-      lastName: jsonn['last_name'] != null ? jsonn['last_name'].toString() : '',
-      studentNumber: jsonn['student_number'] != null
-          ? jsonn['student_number'].toString()
-          : '',
-      role: jsonn['role'] != null
-          ? ROLE_ENUM.values.byName(jsonn['role'].toString())
-          : ROLE_ENUM.values.first,
-    );
-  }
-
-  Map<String, dynamic> toJson() {
-    return _generateMap(
-      id: id,
-      email: email,
-      firstName: firstName,
-      lastName: lastName,
-      studentNumber: studentNumber,
-      role: role,
-    );
-  }
-}
-
 class Block implements SupadartClass<Block> {
   final BigInt id;
   final DateTime createdAt;
@@ -616,6 +537,7 @@ class Block implements SupadartClass<Block> {
   final DateTime startTime;
   final DateTime endTime;
   final BigInt? dayTypeId;
+  final bool? isTestData;
 
   const Block({
     required this.id,
@@ -624,6 +546,7 @@ class Block implements SupadartClass<Block> {
     required this.startTime,
     required this.endTime,
     this.dayTypeId,
+    this.isTestData,
   });
 
   static String get table_name => 'block';
@@ -633,6 +556,7 @@ class Block implements SupadartClass<Block> {
   static String get c_startTime => 'start_time';
   static String get c_endTime => 'end_time';
   static String get c_dayTypeId => 'day_type_id';
+  static String get c_isTestData => 'is_test_data';
 
   static List<Block> converter(List<Map<String, dynamic>> data) {
     return data.map(Block.fromJson).toList();
@@ -649,6 +573,7 @@ class Block implements SupadartClass<Block> {
     DateTime? startTime,
     DateTime? endTime,
     BigInt? dayTypeId,
+    bool? isTestData,
   }) {
     return {
       if (id != null) 'id': id.toString(),
@@ -659,6 +584,7 @@ class Block implements SupadartClass<Block> {
       if (endTime != null)
         'end_time': DateFormat('HH:mm:ss.SSS').format(endTime),
       if (dayTypeId != null) 'day_type_id': dayTypeId.toString(),
+      if (isTestData != null) 'is_test_data': isTestData,
     };
   }
 
@@ -669,6 +595,7 @@ class Block implements SupadartClass<Block> {
     DateTime? startTime,
     DateTime? endTime,
     BigInt? dayTypeId,
+    bool? isTestData,
   }) {
     return _generateMap(
       id: id,
@@ -677,6 +604,7 @@ class Block implements SupadartClass<Block> {
       startTime: startTime,
       endTime: endTime,
       dayTypeId: dayTypeId,
+      isTestData: isTestData,
     );
   }
 
@@ -687,6 +615,7 @@ class Block implements SupadartClass<Block> {
     DateTime? startTime,
     DateTime? endTime,
     BigInt? dayTypeId,
+    bool? isTestData,
   }) {
     return _generateMap(
       id: id,
@@ -695,6 +624,7 @@ class Block implements SupadartClass<Block> {
       startTime: startTime,
       endTime: endTime,
       dayTypeId: dayTypeId,
+      isTestData: isTestData,
     );
   }
 
@@ -716,6 +646,8 @@ class Block implements SupadartClass<Block> {
       dayTypeId: jsonn['day_type_id'] != null
           ? BigInt.parse(jsonn['day_type_id'].toString())
           : BigInt.from(0),
+      isTestData:
+          jsonn['is_test_data'] != null ? jsonn['is_test_data'] as bool : false,
     );
   }
 
@@ -727,6 +659,7 @@ class Block implements SupadartClass<Block> {
       startTime: startTime,
       endTime: endTime,
       dayTypeId: dayTypeId,
+      isTestData: isTestData,
     );
   }
 }
@@ -738,6 +671,7 @@ class Student implements SupadartClass<Student> {
   final String studentNumber;
   final String email;
   final String id;
+  final bool? isTestData;
 
   const Student({
     required this.createdAt,
@@ -746,6 +680,7 @@ class Student implements SupadartClass<Student> {
     required this.studentNumber,
     required this.email,
     required this.id,
+    this.isTestData,
   });
 
   static String get table_name => 'student';
@@ -755,6 +690,7 @@ class Student implements SupadartClass<Student> {
   static String get c_studentNumber => 'student_number';
   static String get c_email => 'email';
   static String get c_id => 'id';
+  static String get c_isTestData => 'is_test_data';
 
   static List<Student> converter(List<Map<String, dynamic>> data) {
     return data.map(Student.fromJson).toList();
@@ -771,6 +707,7 @@ class Student implements SupadartClass<Student> {
     String? studentNumber,
     String? email,
     String? id,
+    bool? isTestData,
   }) {
     return {
       if (createdAt != null) 'created_at': createdAt.toUtc().toIso8601String(),
@@ -779,6 +716,7 @@ class Student implements SupadartClass<Student> {
       if (studentNumber != null) 'student_number': studentNumber,
       if (email != null) 'email': email,
       if (id != null) 'id': id,
+      if (isTestData != null) 'is_test_data': isTestData,
     };
   }
 
@@ -789,6 +727,7 @@ class Student implements SupadartClass<Student> {
     String? studentNumber,
     required String email,
     String? id,
+    bool? isTestData,
   }) {
     return _generateMap(
       createdAt: createdAt,
@@ -797,6 +736,7 @@ class Student implements SupadartClass<Student> {
       studentNumber: studentNumber,
       email: email,
       id: id,
+      isTestData: isTestData,
     );
   }
 
@@ -807,6 +747,7 @@ class Student implements SupadartClass<Student> {
     String? studentNumber,
     String? email,
     String? id,
+    bool? isTestData,
   }) {
     return _generateMap(
       createdAt: createdAt,
@@ -815,6 +756,7 @@ class Student implements SupadartClass<Student> {
       studentNumber: studentNumber,
       email: email,
       id: id,
+      isTestData: isTestData,
     );
   }
 
@@ -831,6 +773,8 @@ class Student implements SupadartClass<Student> {
           : '',
       email: jsonn['email'] != null ? jsonn['email'].toString() : '',
       id: jsonn['id'] != null ? jsonn['id'].toString() : '',
+      isTestData:
+          jsonn['is_test_data'] != null ? jsonn['is_test_data'] as bool : false,
     );
   }
 
@@ -842,6 +786,7 @@ class Student implements SupadartClass<Student> {
       studentNumber: studentNumber,
       email: email,
       id: id,
+      isTestData: isTestData,
     );
   }
 }
@@ -852,6 +797,7 @@ class TeacherAssignment implements SupadartClass<TeacherAssignment> {
   final BigInt sectionId;
   final BigInt schoolTermId;
   final String teacherId;
+  final bool? isTestData;
 
   const TeacherAssignment({
     required this.id,
@@ -859,6 +805,7 @@ class TeacherAssignment implements SupadartClass<TeacherAssignment> {
     required this.sectionId,
     required this.schoolTermId,
     required this.teacherId,
+    this.isTestData,
   });
 
   static String get table_name => 'teacher_assignment';
@@ -867,6 +814,7 @@ class TeacherAssignment implements SupadartClass<TeacherAssignment> {
   static String get c_sectionId => 'section_id';
   static String get c_schoolTermId => 'school_term_id';
   static String get c_teacherId => 'teacher_id';
+  static String get c_isTestData => 'is_test_data';
 
   static List<TeacherAssignment> converter(List<Map<String, dynamic>> data) {
     return data.map(TeacherAssignment.fromJson).toList();
@@ -882,6 +830,7 @@ class TeacherAssignment implements SupadartClass<TeacherAssignment> {
     BigInt? sectionId,
     BigInt? schoolTermId,
     String? teacherId,
+    bool? isTestData,
   }) {
     return {
       if (id != null) 'id': id.toString(),
@@ -889,6 +838,7 @@ class TeacherAssignment implements SupadartClass<TeacherAssignment> {
       if (sectionId != null) 'section_id': sectionId.toString(),
       if (schoolTermId != null) 'school_term_id': schoolTermId.toString(),
       if (teacherId != null) 'teacher_id': teacherId,
+      if (isTestData != null) 'is_test_data': isTestData,
     };
   }
 
@@ -898,6 +848,7 @@ class TeacherAssignment implements SupadartClass<TeacherAssignment> {
     required BigInt sectionId,
     required BigInt schoolTermId,
     required String teacherId,
+    bool? isTestData,
   }) {
     return _generateMap(
       id: id,
@@ -905,6 +856,7 @@ class TeacherAssignment implements SupadartClass<TeacherAssignment> {
       sectionId: sectionId,
       schoolTermId: schoolTermId,
       teacherId: teacherId,
+      isTestData: isTestData,
     );
   }
 
@@ -914,6 +866,7 @@ class TeacherAssignment implements SupadartClass<TeacherAssignment> {
     BigInt? sectionId,
     BigInt? schoolTermId,
     String? teacherId,
+    bool? isTestData,
   }) {
     return _generateMap(
       id: id,
@@ -921,6 +874,7 @@ class TeacherAssignment implements SupadartClass<TeacherAssignment> {
       sectionId: sectionId,
       schoolTermId: schoolTermId,
       teacherId: teacherId,
+      isTestData: isTestData,
     );
   }
 
@@ -940,6 +894,8 @@ class TeacherAssignment implements SupadartClass<TeacherAssignment> {
           : BigInt.from(0),
       teacherId:
           jsonn['teacher_id'] != null ? jsonn['teacher_id'].toString() : '',
+      isTestData:
+          jsonn['is_test_data'] != null ? jsonn['is_test_data'] as bool : false,
     );
   }
 
@@ -950,6 +906,7 @@ class TeacherAssignment implements SupadartClass<TeacherAssignment> {
       sectionId: sectionId,
       schoolTermId: schoolTermId,
       teacherId: teacherId,
+      isTestData: isTestData,
     );
   }
 }
@@ -1138,6 +1095,7 @@ class Section implements SupadartClass<Section> {
   final BigInt schoolTermId;
   final BigInt blockId;
   final String? location;
+  final bool? isTestData;
 
   const Section({
     required this.id,
@@ -1148,6 +1106,7 @@ class Section implements SupadartClass<Section> {
     required this.schoolTermId,
     required this.blockId,
     this.location,
+    this.isTestData,
   });
 
   static String get table_name => 'section';
@@ -1159,6 +1118,7 @@ class Section implements SupadartClass<Section> {
   static String get c_schoolTermId => 'school_term_id';
   static String get c_blockId => 'block_id';
   static String get c_location => 'location';
+  static String get c_isTestData => 'is_test_data';
 
   static List<Section> converter(List<Map<String, dynamic>> data) {
     return data.map(Section.fromJson).toList();
@@ -1177,6 +1137,7 @@ class Section implements SupadartClass<Section> {
     BigInt? schoolTermId,
     BigInt? blockId,
     String? location,
+    bool? isTestData,
   }) {
     return {
       if (id != null) 'id': id.toString(),
@@ -1187,6 +1148,7 @@ class Section implements SupadartClass<Section> {
       if (schoolTermId != null) 'school_term_id': schoolTermId.toString(),
       if (blockId != null) 'block_id': blockId.toString(),
       if (location != null) 'location': location,
+      if (isTestData != null) 'is_test_data': isTestData,
     };
   }
 
@@ -1199,6 +1161,7 @@ class Section implements SupadartClass<Section> {
     required BigInt schoolTermId,
     required BigInt blockId,
     String? location,
+    bool? isTestData,
   }) {
     return _generateMap(
       id: id,
@@ -1209,6 +1172,7 @@ class Section implements SupadartClass<Section> {
       schoolTermId: schoolTermId,
       blockId: blockId,
       location: location,
+      isTestData: isTestData,
     );
   }
 
@@ -1221,6 +1185,7 @@ class Section implements SupadartClass<Section> {
     BigInt? schoolTermId,
     BigInt? blockId,
     String? location,
+    bool? isTestData,
   }) {
     return _generateMap(
       id: id,
@@ -1231,6 +1196,7 @@ class Section implements SupadartClass<Section> {
       schoolTermId: schoolTermId,
       blockId: blockId,
       location: location,
+      isTestData: isTestData,
     );
   }
 
@@ -1255,6 +1221,8 @@ class Section implements SupadartClass<Section> {
           ? BigInt.parse(jsonn['block_id'].toString())
           : BigInt.from(0),
       location: jsonn['location'] != null ? jsonn['location'].toString() : '',
+      isTestData:
+          jsonn['is_test_data'] != null ? jsonn['is_test_data'] as bool : false,
     );
   }
 
@@ -1268,6 +1236,7 @@ class Section implements SupadartClass<Section> {
       schoolTermId: schoolTermId,
       blockId: blockId,
       location: location,
+      isTestData: isTestData,
     );
   }
 }
@@ -1278,6 +1247,7 @@ class StudentEnrolment implements SupadartClass<StudentEnrolment> {
   final BigInt sectionId;
   final BigInt schoolTermId;
   final String studentId;
+  final bool? isTestData;
 
   const StudentEnrolment({
     required this.id,
@@ -1285,6 +1255,7 @@ class StudentEnrolment implements SupadartClass<StudentEnrolment> {
     required this.sectionId,
     required this.schoolTermId,
     required this.studentId,
+    this.isTestData,
   });
 
   static String get table_name => 'student_enrolment';
@@ -1293,6 +1264,7 @@ class StudentEnrolment implements SupadartClass<StudentEnrolment> {
   static String get c_sectionId => 'section_id';
   static String get c_schoolTermId => 'school_term_id';
   static String get c_studentId => 'student_id';
+  static String get c_isTestData => 'is_test_data';
 
   static List<StudentEnrolment> converter(List<Map<String, dynamic>> data) {
     return data.map(StudentEnrolment.fromJson).toList();
@@ -1308,6 +1280,7 @@ class StudentEnrolment implements SupadartClass<StudentEnrolment> {
     BigInt? sectionId,
     BigInt? schoolTermId,
     String? studentId,
+    bool? isTestData,
   }) {
     return {
       if (id != null) 'id': id.toString(),
@@ -1315,6 +1288,7 @@ class StudentEnrolment implements SupadartClass<StudentEnrolment> {
       if (sectionId != null) 'section_id': sectionId.toString(),
       if (schoolTermId != null) 'school_term_id': schoolTermId.toString(),
       if (studentId != null) 'student_id': studentId,
+      if (isTestData != null) 'is_test_data': isTestData,
     };
   }
 
@@ -1324,6 +1298,7 @@ class StudentEnrolment implements SupadartClass<StudentEnrolment> {
     required BigInt sectionId,
     required BigInt schoolTermId,
     required String studentId,
+    bool? isTestData,
   }) {
     return _generateMap(
       id: id,
@@ -1331,6 +1306,7 @@ class StudentEnrolment implements SupadartClass<StudentEnrolment> {
       sectionId: sectionId,
       schoolTermId: schoolTermId,
       studentId: studentId,
+      isTestData: isTestData,
     );
   }
 
@@ -1340,6 +1316,7 @@ class StudentEnrolment implements SupadartClass<StudentEnrolment> {
     BigInt? sectionId,
     BigInt? schoolTermId,
     String? studentId,
+    bool? isTestData,
   }) {
     return _generateMap(
       id: id,
@@ -1347,6 +1324,7 @@ class StudentEnrolment implements SupadartClass<StudentEnrolment> {
       sectionId: sectionId,
       schoolTermId: schoolTermId,
       studentId: studentId,
+      isTestData: isTestData,
     );
   }
 
@@ -1366,6 +1344,8 @@ class StudentEnrolment implements SupadartClass<StudentEnrolment> {
           : BigInt.from(0),
       studentId:
           jsonn['student_id'] != null ? jsonn['student_id'].toString() : '',
+      isTestData:
+          jsonn['is_test_data'] != null ? jsonn['is_test_data'] as bool : false,
     );
   }
 
@@ -1376,6 +1356,133 @@ class StudentEnrolment implements SupadartClass<StudentEnrolment> {
       sectionId: sectionId,
       schoolTermId: schoolTermId,
       studentId: studentId,
+      isTestData: isTestData,
+    );
+  }
+}
+
+class VProfile implements SupadartClass<VProfile> {
+  final String? id;
+  final String? userId;
+  final String? email;
+  final String? firstName;
+  final String? lastName;
+  final String? studentNumber;
+  final ROLE_ENUM? role;
+
+  const VProfile({
+    this.id,
+    this.userId,
+    this.email,
+    this.firstName,
+    this.lastName,
+    this.studentNumber,
+    this.role,
+  });
+
+  static String get table_name => 'v_profile';
+  static String get c_id => 'id';
+  static String get c_userId => 'user_id';
+  static String get c_email => 'email';
+  static String get c_firstName => 'first_name';
+  static String get c_lastName => 'last_name';
+  static String get c_studentNumber => 'student_number';
+  static String get c_role => 'role';
+
+  static List<VProfile> converter(List<Map<String, dynamic>> data) {
+    return data.map(VProfile.fromJson).toList();
+  }
+
+  static VProfile converterSingle(Map<String, dynamic> data) {
+    return VProfile.fromJson(data);
+  }
+
+  static Map<String, dynamic> _generateMap({
+    String? id,
+    String? userId,
+    String? email,
+    String? firstName,
+    String? lastName,
+    String? studentNumber,
+    ROLE_ENUM? role,
+  }) {
+    return {
+      if (id != null) 'id': id,
+      if (userId != null) 'user_id': userId,
+      if (email != null) 'email': email,
+      if (firstName != null) 'first_name': firstName,
+      if (lastName != null) 'last_name': lastName,
+      if (studentNumber != null) 'student_number': studentNumber,
+      if (role != null) 'role': role.toString().split('.').last,
+    };
+  }
+
+  static Map<String, dynamic> insert({
+    String? id,
+    String? userId,
+    String? email,
+    String? firstName,
+    String? lastName,
+    String? studentNumber,
+    ROLE_ENUM? role,
+  }) {
+    return _generateMap(
+      id: id,
+      userId: userId,
+      email: email,
+      firstName: firstName,
+      lastName: lastName,
+      studentNumber: studentNumber,
+      role: role,
+    );
+  }
+
+  static Map<String, dynamic> update({
+    String? id,
+    String? userId,
+    String? email,
+    String? firstName,
+    String? lastName,
+    String? studentNumber,
+    ROLE_ENUM? role,
+  }) {
+    return _generateMap(
+      id: id,
+      userId: userId,
+      email: email,
+      firstName: firstName,
+      lastName: lastName,
+      studentNumber: studentNumber,
+      role: role,
+    );
+  }
+
+  factory VProfile.fromJson(Map<String, dynamic> jsonn) {
+    return VProfile(
+      id: jsonn['id'] != null ? jsonn['id'].toString() : '',
+      userId: jsonn['user_id'] != null ? jsonn['user_id'].toString() : '',
+      email: jsonn['email'] != null ? jsonn['email'].toString() : '',
+      firstName:
+          jsonn['first_name'] != null ? jsonn['first_name'].toString() : '',
+      lastName: jsonn['last_name'] != null ? jsonn['last_name'].toString() : '',
+      studentNumber: jsonn['student_number'] != null
+          ? jsonn['student_number'].toString()
+          : '',
+      role: jsonn['role'] != null
+          ? ROLE_ENUM.values.byName(jsonn['role'].toString())
+          : ROLE_ENUM.values.first,
+    );
+  }
+
+  Map<String, dynamic> toJson() {
+    return _generateMap(
+      id: id,
+      userId: userId,
+      email: email,
+      firstName: firstName,
+      lastName: lastName,
+      studentNumber: studentNumber,
+      role: role,
     );
   }
 }
@@ -1386,6 +1493,7 @@ class Calendar implements SupadartClass<Calendar> {
   final DateTime date;
   final bool isSchoolDay;
   final String? reason;
+  final bool? isTestData;
 
   const Calendar({
     required this.id,
@@ -1393,6 +1501,7 @@ class Calendar implements SupadartClass<Calendar> {
     required this.date,
     required this.isSchoolDay,
     this.reason,
+    this.isTestData,
   });
 
   static String get table_name => 'calendar';
@@ -1401,6 +1510,7 @@ class Calendar implements SupadartClass<Calendar> {
   static String get c_date => 'date';
   static String get c_isSchoolDay => 'is_school_day';
   static String get c_reason => 'reason';
+  static String get c_isTestData => 'is_test_data';
 
   static List<Calendar> converter(List<Map<String, dynamic>> data) {
     return data.map(Calendar.fromJson).toList();
@@ -1416,6 +1526,7 @@ class Calendar implements SupadartClass<Calendar> {
     DateTime? date,
     bool? isSchoolDay,
     String? reason,
+    bool? isTestData,
   }) {
     return {
       if (id != null) 'id': id,
@@ -1423,6 +1534,7 @@ class Calendar implements SupadartClass<Calendar> {
       if (date != null) 'date': date.toIso8601String(),
       if (isSchoolDay != null) 'is_school_day': isSchoolDay,
       if (reason != null) 'reason': reason,
+      if (isTestData != null) 'is_test_data': isTestData,
     };
   }
 
@@ -1432,6 +1544,7 @@ class Calendar implements SupadartClass<Calendar> {
     required DateTime date,
     bool? isSchoolDay,
     String? reason,
+    bool? isTestData,
   }) {
     return _generateMap(
       id: id,
@@ -1439,6 +1552,7 @@ class Calendar implements SupadartClass<Calendar> {
       date: date,
       isSchoolDay: isSchoolDay,
       reason: reason,
+      isTestData: isTestData,
     );
   }
 
@@ -1448,6 +1562,7 @@ class Calendar implements SupadartClass<Calendar> {
     DateTime? date,
     bool? isSchoolDay,
     String? reason,
+    bool? isTestData,
   }) {
     return _generateMap(
       id: id,
@@ -1455,6 +1570,7 @@ class Calendar implements SupadartClass<Calendar> {
       date: date,
       isSchoolDay: isSchoolDay,
       reason: reason,
+      isTestData: isTestData,
     );
   }
 
@@ -1470,6 +1586,8 @@ class Calendar implements SupadartClass<Calendar> {
           ? jsonn['is_school_day'] as bool
           : false,
       reason: jsonn['reason'] != null ? jsonn['reason'].toString() : '',
+      isTestData:
+          jsonn['is_test_data'] != null ? jsonn['is_test_data'] as bool : false,
     );
   }
 
@@ -1480,6 +1598,7 @@ class Calendar implements SupadartClass<Calendar> {
       date: date,
       isSchoolDay: isSchoolDay,
       reason: reason,
+      isTestData: isTestData,
     );
   }
 }
@@ -1490,6 +1609,7 @@ class TagAssignment implements SupadartClass<TagAssignment> {
   final BigInt? tagId;
   final BigInt? sectionId;
   final DateTime? validUntil;
+  final bool? isTestData;
 
   const TagAssignment({
     required this.id,
@@ -1497,6 +1617,7 @@ class TagAssignment implements SupadartClass<TagAssignment> {
     this.tagId,
     this.sectionId,
     this.validUntil,
+    this.isTestData,
   });
 
   static String get table_name => 'tag_assignment';
@@ -1505,6 +1626,7 @@ class TagAssignment implements SupadartClass<TagAssignment> {
   static String get c_tagId => 'tag_id';
   static String get c_sectionId => 'section_id';
   static String get c_validUntil => 'valid_until';
+  static String get c_isTestData => 'is_test_data';
 
   static List<TagAssignment> converter(List<Map<String, dynamic>> data) {
     return data.map(TagAssignment.fromJson).toList();
@@ -1520,6 +1642,7 @@ class TagAssignment implements SupadartClass<TagAssignment> {
     BigInt? tagId,
     BigInt? sectionId,
     DateTime? validUntil,
+    bool? isTestData,
   }) {
     return {
       if (id != null) 'id': id.toString(),
@@ -1528,6 +1651,7 @@ class TagAssignment implements SupadartClass<TagAssignment> {
       if (sectionId != null) 'section_id': sectionId.toString(),
       if (validUntil != null)
         'valid_until': validUntil.toUtc().toIso8601String(),
+      if (isTestData != null) 'is_test_data': isTestData,
     };
   }
 
@@ -1537,6 +1661,7 @@ class TagAssignment implements SupadartClass<TagAssignment> {
     BigInt? tagId,
     BigInt? sectionId,
     DateTime? validUntil,
+    bool? isTestData,
   }) {
     return _generateMap(
       id: id,
@@ -1544,6 +1669,7 @@ class TagAssignment implements SupadartClass<TagAssignment> {
       tagId: tagId,
       sectionId: sectionId,
       validUntil: validUntil,
+      isTestData: isTestData,
     );
   }
 
@@ -1553,6 +1679,7 @@ class TagAssignment implements SupadartClass<TagAssignment> {
     BigInt? tagId,
     BigInt? sectionId,
     DateTime? validUntil,
+    bool? isTestData,
   }) {
     return _generateMap(
       id: id,
@@ -1560,6 +1687,7 @@ class TagAssignment implements SupadartClass<TagAssignment> {
       tagId: tagId,
       sectionId: sectionId,
       validUntil: validUntil,
+      isTestData: isTestData,
     );
   }
 
@@ -1580,6 +1708,8 @@ class TagAssignment implements SupadartClass<TagAssignment> {
       validUntil: jsonn['valid_until'] != null
           ? DateTime.parse(jsonn['valid_until'].toString())
           : DateTime.fromMillisecondsSinceEpoch(0),
+      isTestData:
+          jsonn['is_test_data'] != null ? jsonn['is_test_data'] as bool : false,
     );
   }
 
@@ -1590,6 +1720,7 @@ class TagAssignment implements SupadartClass<TagAssignment> {
       tagId: tagId,
       sectionId: sectionId,
       validUntil: validUntil,
+      isTestData: isTestData,
     );
   }
 }
@@ -1752,12 +1883,14 @@ class UserRole implements SupadartClass<UserRole> {
   final String userId;
   final ROLE_ENUM role;
   final DateTime createdAt;
+  final bool? isTestData;
 
   const UserRole({
     required this.id,
     required this.userId,
     required this.role,
     required this.createdAt,
+    this.isTestData,
   });
 
   static String get table_name => 'user_role';
@@ -1765,6 +1898,7 @@ class UserRole implements SupadartClass<UserRole> {
   static String get c_userId => 'user_id';
   static String get c_role => 'role';
   static String get c_createdAt => 'created_at';
+  static String get c_isTestData => 'is_test_data';
 
   static List<UserRole> converter(List<Map<String, dynamic>> data) {
     return data.map(UserRole.fromJson).toList();
@@ -1779,12 +1913,14 @@ class UserRole implements SupadartClass<UserRole> {
     String? userId,
     ROLE_ENUM? role,
     DateTime? createdAt,
+    bool? isTestData,
   }) {
     return {
       if (id != null) 'id': id.toString(),
       if (userId != null) 'user_id': userId,
       if (role != null) 'role': role.toString().split('.').last,
       if (createdAt != null) 'created_at': createdAt.toUtc().toIso8601String(),
+      if (isTestData != null) 'is_test_data': isTestData,
     };
   }
 
@@ -1793,12 +1929,14 @@ class UserRole implements SupadartClass<UserRole> {
     required String userId,
     required ROLE_ENUM role,
     DateTime? createdAt,
+    bool? isTestData,
   }) {
     return _generateMap(
       id: id,
       userId: userId,
       role: role,
       createdAt: createdAt,
+      isTestData: isTestData,
     );
   }
 
@@ -1807,12 +1945,14 @@ class UserRole implements SupadartClass<UserRole> {
     String? userId,
     ROLE_ENUM? role,
     DateTime? createdAt,
+    bool? isTestData,
   }) {
     return _generateMap(
       id: id,
       userId: userId,
       role: role,
       createdAt: createdAt,
+      isTestData: isTestData,
     );
   }
 
@@ -1828,6 +1968,8 @@ class UserRole implements SupadartClass<UserRole> {
       createdAt: jsonn['created_at'] != null
           ? DateTime.parse(jsonn['created_at'].toString())
           : DateTime.fromMillisecondsSinceEpoch(0),
+      isTestData:
+          jsonn['is_test_data'] != null ? jsonn['is_test_data'] as bool : false,
     );
   }
 
@@ -1837,6 +1979,7 @@ class UserRole implements SupadartClass<UserRole> {
       userId: userId,
       role: role,
       createdAt: createdAt,
+      isTestData: isTestData,
     );
   }
 }
@@ -1846,12 +1989,14 @@ class Messages implements SupadartClass<Messages> {
   final DateTime createdAt;
   final String? content;
   final String? sender;
+  final bool? isTestData;
 
   const Messages({
     required this.id,
     required this.createdAt,
     this.content,
     this.sender,
+    this.isTestData,
   });
 
   static String get table_name => 'messages';
@@ -1859,6 +2004,7 @@ class Messages implements SupadartClass<Messages> {
   static String get c_createdAt => 'created_at';
   static String get c_content => 'content';
   static String get c_sender => 'sender';
+  static String get c_isTestData => 'is_test_data';
 
   static List<Messages> converter(List<Map<String, dynamic>> data) {
     return data.map(Messages.fromJson).toList();
@@ -1873,12 +2019,14 @@ class Messages implements SupadartClass<Messages> {
     DateTime? createdAt,
     String? content,
     String? sender,
+    bool? isTestData,
   }) {
     return {
       if (id != null) 'id': id.toString(),
       if (createdAt != null) 'created_at': createdAt.toUtc().toIso8601String(),
       if (content != null) 'content': content,
       if (sender != null) 'sender': sender,
+      if (isTestData != null) 'is_test_data': isTestData,
     };
   }
 
@@ -1887,12 +2035,14 @@ class Messages implements SupadartClass<Messages> {
     DateTime? createdAt,
     String? content,
     String? sender,
+    bool? isTestData,
   }) {
     return _generateMap(
       id: id,
       createdAt: createdAt,
       content: content,
       sender: sender,
+      isTestData: isTestData,
     );
   }
 
@@ -1901,12 +2051,14 @@ class Messages implements SupadartClass<Messages> {
     DateTime? createdAt,
     String? content,
     String? sender,
+    bool? isTestData,
   }) {
     return _generateMap(
       id: id,
       createdAt: createdAt,
       content: content,
       sender: sender,
+      isTestData: isTestData,
     );
   }
 
@@ -1920,6 +2072,8 @@ class Messages implements SupadartClass<Messages> {
           : DateTime.fromMillisecondsSinceEpoch(0),
       content: jsonn['content'] != null ? jsonn['content'].toString() : '',
       sender: jsonn['sender'] != null ? jsonn['sender'].toString() : '',
+      isTestData:
+          jsonn['is_test_data'] != null ? jsonn['is_test_data'] as bool : false,
     );
   }
 
@@ -1929,6 +2083,7 @@ class Messages implements SupadartClass<Messages> {
       createdAt: createdAt,
       content: content,
       sender: sender,
+      isTestData: isTestData,
     );
   }
 }
@@ -1939,6 +2094,7 @@ class SchoolTerm implements SupadartClass<SchoolTerm> {
   final String name;
   final DateTime startDate;
   final DateTime endDate;
+  final bool? isTestData;
 
   const SchoolTerm({
     required this.id,
@@ -1946,6 +2102,7 @@ class SchoolTerm implements SupadartClass<SchoolTerm> {
     required this.name,
     required this.startDate,
     required this.endDate,
+    this.isTestData,
   });
 
   static String get table_name => 'school_term';
@@ -1954,6 +2111,7 @@ class SchoolTerm implements SupadartClass<SchoolTerm> {
   static String get c_name => 'name';
   static String get c_startDate => 'start_date';
   static String get c_endDate => 'end_date';
+  static String get c_isTestData => 'is_test_data';
 
   static List<SchoolTerm> converter(List<Map<String, dynamic>> data) {
     return data.map(SchoolTerm.fromJson).toList();
@@ -1969,6 +2127,7 @@ class SchoolTerm implements SupadartClass<SchoolTerm> {
     String? name,
     DateTime? startDate,
     DateTime? endDate,
+    bool? isTestData,
   }) {
     return {
       if (id != null) 'id': id.toString(),
@@ -1976,6 +2135,7 @@ class SchoolTerm implements SupadartClass<SchoolTerm> {
       if (name != null) 'name': name,
       if (startDate != null) 'start_date': startDate.toIso8601String(),
       if (endDate != null) 'end_date': endDate.toIso8601String(),
+      if (isTestData != null) 'is_test_data': isTestData,
     };
   }
 
@@ -1985,6 +2145,7 @@ class SchoolTerm implements SupadartClass<SchoolTerm> {
     String? name,
     DateTime? startDate,
     DateTime? endDate,
+    bool? isTestData,
   }) {
     return _generateMap(
       id: id,
@@ -1992,6 +2153,7 @@ class SchoolTerm implements SupadartClass<SchoolTerm> {
       name: name,
       startDate: startDate,
       endDate: endDate,
+      isTestData: isTestData,
     );
   }
 
@@ -2001,6 +2163,7 @@ class SchoolTerm implements SupadartClass<SchoolTerm> {
     String? name,
     DateTime? startDate,
     DateTime? endDate,
+    bool? isTestData,
   }) {
     return _generateMap(
       id: id,
@@ -2008,6 +2171,7 @@ class SchoolTerm implements SupadartClass<SchoolTerm> {
       name: name,
       startDate: startDate,
       endDate: endDate,
+      isTestData: isTestData,
     );
   }
 
@@ -2026,6 +2190,8 @@ class SchoolTerm implements SupadartClass<SchoolTerm> {
       endDate: jsonn['end_date'] != null
           ? DateTime.parse(jsonn['end_date'].toString())
           : DateTime.fromMillisecondsSinceEpoch(0),
+      isTestData:
+          jsonn['is_test_data'] != null ? jsonn['is_test_data'] as bool : false,
     );
   }
 
@@ -2036,6 +2202,7 @@ class SchoolTerm implements SupadartClass<SchoolTerm> {
       name: name,
       startDate: startDate,
       endDate: endDate,
+      isTestData: isTestData,
     );
   }
 }
@@ -2045,12 +2212,14 @@ class Tag implements SupadartClass<Tag> {
   final DateTime createdAt;
   final String? note;
   final String uid;
+  final bool? isTestData;
 
   const Tag({
     required this.id,
     required this.createdAt,
     this.note,
     required this.uid,
+    this.isTestData,
   });
 
   static String get table_name => 'tag';
@@ -2058,6 +2227,7 @@ class Tag implements SupadartClass<Tag> {
   static String get c_createdAt => 'created_at';
   static String get c_note => 'note';
   static String get c_uid => 'uid';
+  static String get c_isTestData => 'is_test_data';
 
   static List<Tag> converter(List<Map<String, dynamic>> data) {
     return data.map(Tag.fromJson).toList();
@@ -2072,12 +2242,14 @@ class Tag implements SupadartClass<Tag> {
     DateTime? createdAt,
     String? note,
     String? uid,
+    bool? isTestData,
   }) {
     return {
       if (id != null) 'id': id.toString(),
       if (createdAt != null) 'created_at': createdAt.toUtc().toIso8601String(),
       if (note != null) 'note': note,
       if (uid != null) 'uid': uid,
+      if (isTestData != null) 'is_test_data': isTestData,
     };
   }
 
@@ -2086,12 +2258,14 @@ class Tag implements SupadartClass<Tag> {
     DateTime? createdAt,
     String? note,
     String? uid,
+    bool? isTestData,
   }) {
     return _generateMap(
       id: id,
       createdAt: createdAt,
       note: note,
       uid: uid,
+      isTestData: isTestData,
     );
   }
 
@@ -2100,12 +2274,14 @@ class Tag implements SupadartClass<Tag> {
     DateTime? createdAt,
     String? note,
     String? uid,
+    bool? isTestData,
   }) {
     return _generateMap(
       id: id,
       createdAt: createdAt,
       note: note,
       uid: uid,
+      isTestData: isTestData,
     );
   }
 
@@ -2119,6 +2295,8 @@ class Tag implements SupadartClass<Tag> {
           : DateTime.fromMillisecondsSinceEpoch(0),
       note: jsonn['note'] != null ? jsonn['note'].toString() : '',
       uid: jsonn['uid'] != null ? jsonn['uid'].toString() : '',
+      isTestData:
+          jsonn['is_test_data'] != null ? jsonn['is_test_data'] as bool : false,
     );
   }
 
@@ -2128,6 +2306,7 @@ class Tag implements SupadartClass<Tag> {
       createdAt: createdAt,
       note: note,
       uid: uid,
+      isTestData: isTestData,
     );
   }
 }
@@ -2138,6 +2317,7 @@ class Teacher implements SupadartClass<Teacher> {
   final String? lastName;
   final String email;
   final String id;
+  final bool? isTestData;
 
   const Teacher({
     required this.createdAt,
@@ -2145,6 +2325,7 @@ class Teacher implements SupadartClass<Teacher> {
     this.lastName,
     required this.email,
     required this.id,
+    this.isTestData,
   });
 
   static String get table_name => 'teacher';
@@ -2153,6 +2334,7 @@ class Teacher implements SupadartClass<Teacher> {
   static String get c_lastName => 'last_name';
   static String get c_email => 'email';
   static String get c_id => 'id';
+  static String get c_isTestData => 'is_test_data';
 
   static List<Teacher> converter(List<Map<String, dynamic>> data) {
     return data.map(Teacher.fromJson).toList();
@@ -2168,6 +2350,7 @@ class Teacher implements SupadartClass<Teacher> {
     String? lastName,
     String? email,
     String? id,
+    bool? isTestData,
   }) {
     return {
       if (createdAt != null) 'created_at': createdAt.toUtc().toIso8601String(),
@@ -2175,6 +2358,7 @@ class Teacher implements SupadartClass<Teacher> {
       if (lastName != null) 'last_name': lastName,
       if (email != null) 'email': email,
       if (id != null) 'id': id,
+      if (isTestData != null) 'is_test_data': isTestData,
     };
   }
 
@@ -2184,6 +2368,7 @@ class Teacher implements SupadartClass<Teacher> {
     String? lastName,
     required String email,
     String? id,
+    bool? isTestData,
   }) {
     return _generateMap(
       createdAt: createdAt,
@@ -2191,6 +2376,7 @@ class Teacher implements SupadartClass<Teacher> {
       lastName: lastName,
       email: email,
       id: id,
+      isTestData: isTestData,
     );
   }
 
@@ -2200,6 +2386,7 @@ class Teacher implements SupadartClass<Teacher> {
     String? lastName,
     String? email,
     String? id,
+    bool? isTestData,
   }) {
     return _generateMap(
       createdAt: createdAt,
@@ -2207,6 +2394,7 @@ class Teacher implements SupadartClass<Teacher> {
       lastName: lastName,
       email: email,
       id: id,
+      isTestData: isTestData,
     );
   }
 
@@ -2220,6 +2408,8 @@ class Teacher implements SupadartClass<Teacher> {
       lastName: jsonn['last_name'] != null ? jsonn['last_name'].toString() : '',
       email: jsonn['email'] != null ? jsonn['email'].toString() : '',
       id: jsonn['id'] != null ? jsonn['id'].toString() : '',
+      isTestData:
+          jsonn['is_test_data'] != null ? jsonn['is_test_data'] as bool : false,
     );
   }
 
@@ -2230,6 +2420,7 @@ class Teacher implements SupadartClass<Teacher> {
       lastName: lastName,
       email: email,
       id: id,
+      isTestData: isTestData,
     );
   }
 }
@@ -2238,17 +2429,20 @@ class SchoolDayType implements SupadartClass<SchoolDayType> {
   final BigInt id;
   final DateTime createdAt;
   final String name;
+  final bool? isTestData;
 
   const SchoolDayType({
     required this.id,
     required this.createdAt,
     required this.name,
+    this.isTestData,
   });
 
   static String get table_name => 'school_day_type';
   static String get c_id => 'id';
   static String get c_createdAt => 'created_at';
   static String get c_name => 'name';
+  static String get c_isTestData => 'is_test_data';
 
   static List<SchoolDayType> converter(List<Map<String, dynamic>> data) {
     return data.map(SchoolDayType.fromJson).toList();
@@ -2262,11 +2456,13 @@ class SchoolDayType implements SupadartClass<SchoolDayType> {
     BigInt? id,
     DateTime? createdAt,
     String? name,
+    bool? isTestData,
   }) {
     return {
       if (id != null) 'id': id.toString(),
       if (createdAt != null) 'created_at': createdAt.toUtc().toIso8601String(),
       if (name != null) 'name': name,
+      if (isTestData != null) 'is_test_data': isTestData,
     };
   }
 
@@ -2274,11 +2470,13 @@ class SchoolDayType implements SupadartClass<SchoolDayType> {
     BigInt? id,
     DateTime? createdAt,
     String? name,
+    bool? isTestData,
   }) {
     return _generateMap(
       id: id,
       createdAt: createdAt,
       name: name,
+      isTestData: isTestData,
     );
   }
 
@@ -2286,11 +2484,13 @@ class SchoolDayType implements SupadartClass<SchoolDayType> {
     BigInt? id,
     DateTime? createdAt,
     String? name,
+    bool? isTestData,
   }) {
     return _generateMap(
       id: id,
       createdAt: createdAt,
       name: name,
+      isTestData: isTestData,
     );
   }
 
@@ -2303,6 +2503,8 @@ class SchoolDayType implements SupadartClass<SchoolDayType> {
           ? DateTime.parse(jsonn['created_at'].toString())
           : DateTime.fromMillisecondsSinceEpoch(0),
       name: jsonn['name'] != null ? jsonn['name'].toString() : '',
+      isTestData:
+          jsonn['is_test_data'] != null ? jsonn['is_test_data'] as bool : false,
     );
   }
 
@@ -2311,6 +2513,7 @@ class SchoolDayType implements SupadartClass<SchoolDayType> {
       id: id,
       createdAt: createdAt,
       name: name,
+      isTestData: isTestData,
     );
   }
 }
@@ -2323,6 +2526,7 @@ class Attendance implements SupadartClass<Attendance> {
   final DateTime? entryTime;
   final DateTime date;
   final BigInt studentEnrolmentId;
+  final bool? isTestData;
 
   const Attendance({
     required this.id,
@@ -2332,6 +2536,7 @@ class Attendance implements SupadartClass<Attendance> {
     this.entryTime,
     required this.date,
     required this.studentEnrolmentId,
+    this.isTestData,
   });
 
   static String get table_name => 'attendance';
@@ -2342,6 +2547,7 @@ class Attendance implements SupadartClass<Attendance> {
   static String get c_entryTime => 'entry_time';
   static String get c_date => 'date';
   static String get c_studentEnrolmentId => 'student_enrolment_id';
+  static String get c_isTestData => 'is_test_data';
 
   static List<Attendance> converter(List<Map<String, dynamic>> data) {
     return data.map(Attendance.fromJson).toList();
@@ -2359,6 +2565,7 @@ class Attendance implements SupadartClass<Attendance> {
     DateTime? entryTime,
     DateTime? date,
     BigInt? studentEnrolmentId,
+    bool? isTestData,
   }) {
     return {
       if (id != null) 'id': id.toString(),
@@ -2369,6 +2576,7 @@ class Attendance implements SupadartClass<Attendance> {
       if (date != null) 'date': date.toIso8601String(),
       if (studentEnrolmentId != null)
         'student_enrolment_id': studentEnrolmentId.toString(),
+      if (isTestData != null) 'is_test_data': isTestData,
     };
   }
 
@@ -2380,6 +2588,7 @@ class Attendance implements SupadartClass<Attendance> {
     DateTime? entryTime,
     required DateTime date,
     required BigInt studentEnrolmentId,
+    bool? isTestData,
   }) {
     return _generateMap(
       id: id,
@@ -2389,6 +2598,7 @@ class Attendance implements SupadartClass<Attendance> {
       entryTime: entryTime,
       date: date,
       studentEnrolmentId: studentEnrolmentId,
+      isTestData: isTestData,
     );
   }
 
@@ -2400,6 +2610,7 @@ class Attendance implements SupadartClass<Attendance> {
     DateTime? entryTime,
     DateTime? date,
     BigInt? studentEnrolmentId,
+    bool? isTestData,
   }) {
     return _generateMap(
       id: id,
@@ -2409,6 +2620,7 @@ class Attendance implements SupadartClass<Attendance> {
       entryTime: entryTime,
       date: date,
       studentEnrolmentId: studentEnrolmentId,
+      isTestData: isTestData,
     );
   }
 
@@ -2435,6 +2647,8 @@ class Attendance implements SupadartClass<Attendance> {
       studentEnrolmentId: jsonn['student_enrolment_id'] != null
           ? BigInt.parse(jsonn['student_enrolment_id'].toString())
           : BigInt.from(0),
+      isTestData:
+          jsonn['is_test_data'] != null ? jsonn['is_test_data'] as bool : false,
     );
   }
 
@@ -2447,6 +2661,7 @@ class Attendance implements SupadartClass<Attendance> {
       entryTime: entryTime,
       date: date,
       studentEnrolmentId: studentEnrolmentId,
+      isTestData: isTestData,
     );
   }
 }

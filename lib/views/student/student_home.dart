@@ -1,7 +1,8 @@
 import 'package:bara_flutter/main.dart';
 import 'package:bara_flutter/models/student_section.dart';
 import 'package:bara_flutter/services/timer_service.dart';
-import 'package:bara_flutter/views/student/StudentScanButton.dart';
+import 'package:bara_flutter/util/datetime_x.dart';
+import 'package:bara_flutter/views/student/student_scan_button.dart';
 import 'package:bara_flutter/views/student/main_content.dart';
 import 'package:flutter/material.dart';
 import 'package:logging/logging.dart';
@@ -52,15 +53,20 @@ class _StudentHomeState extends State<StudentHome> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
+            // Date
+            Text(
+              DateTime.now().formattedDate,
+              style: theme.textTheme.titleLarge,
+            ),
             Spacer(),
-            MainContent(
+            StudentMainContent(
               currentSection: currentSection,
               upcomingSection: upcomingSection,
             ),
             Spacer(),
             // Scan button
             StudentScanButton(
-              action: _startNFCReading,
+              onPressed: _startNFCReading,
               scanReady: scanReady,
             ),
             SizedBox(height: 16),

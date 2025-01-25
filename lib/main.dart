@@ -1,3 +1,5 @@
+import 'package:bara_flutter/models/app_user.dart';
+import 'package:bara_flutter/models/profile.dart';
 import 'package:bara_flutter/services/supabase_auth.dart';
 import 'package:bara_flutter/services/timer_service.dart';
 import 'package:bara_flutter/views/app/app.dart';
@@ -25,6 +27,10 @@ Future<void> main() async {
   // Register the services
   di.registerSingleton<SupabaseAuth>(SupabaseAuth());
   di.registerSingleton<TimerService>(TimerService());
+
+  // Begin authentication
+  final supabaseAuth = di<SupabaseAuth>();
+  supabaseAuth.listenToAuthStateChanges();
 
   // Run the app
   runApp(const MainApp());

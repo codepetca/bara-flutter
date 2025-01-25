@@ -74,10 +74,11 @@ class _SignInViewState extends State<SignInView> {
 
   void _onSignIn() async {
     if (_formKey.currentState!.validate()) {
-      _supabaseAuth.signIn(_emailController.text);
+      final email = _emailController.text;
+      _supabaseAuth.signInWithMagicLinkTest(email);
 
       // Save email to SharedPreferences
-      await prefs.saveSignInEmail(_emailController.text);
+      await prefs.saveSignInEmail(email);
     }
   }
 }

@@ -57,5 +57,9 @@
 		</array>
 		</dict>
 	</array>
+	<key>NSNFCUsageDescription</key>
+	<string>This app uses NFC to scan tags</string>
+
+
 </dict>
 </plist>

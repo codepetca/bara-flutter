@@ -7,6 +7,7 @@ import 'package:bara_flutter/views/student/student_scan_button.dart';
 import 'package:bara_flutter/views/student/main_content.dart';
 import 'package:flutter/material.dart';
 import 'package:logging/logging.dart';
+import 'package:nfc_manager/nfc_manager.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:bara_flutter/services/supabase_x.dart';
 import 'package:watch_it/watch_it.dart';
@@ -83,8 +84,27 @@ class _StudentHomeState extends State<StudentHome> {
     return !currentSection!.scanSubmitted;
   }
 
-  void _startNFCReading() {
-    throw UnimplementedError();
+  // Start NFC reading
+  void _startNFCReading() async {
+    bool isAvailable = await NfcManager.instance.isAvailable();
+    if (!isAvailable) {
+      log.warning('NFC is not available');
+      return;
+    }
+    NfcManager.instance.startSession(
+      alertMessage: 'Hold the top of your device near the NFC tag',
+      onDiscovered: (NfcTag tag) async {
+        log.info('NFC tag discovered: ${tag.data}');
+        Ndef? ndef = Ndef.from(tag);
+        if (ndef == null) {
+          log.warning('Tag is not NDEF');
+          return;
+        }
+
+        log.info('NDEF message: ${ndef.read()}');
+      },
+    );
+    NfcManager.instance.stopSession();
   }
 
   // TODO: Use actual student ID and date

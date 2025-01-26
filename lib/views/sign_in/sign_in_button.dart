@@ -12,7 +12,10 @@ class SignInButton extends StatelessWidget {
         width: double.infinity,
         child: ElevatedButton(
           onPressed: action,
-          child: Text('Sign In'),
+          child: Padding(
+            padding: const EdgeInsets.all(24.0),
+            child: Text('Sign In'),
+          ),
         ),
       ),
     );

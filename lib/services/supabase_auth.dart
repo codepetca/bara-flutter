@@ -2,12 +2,14 @@ import 'dart:async';
 
 import 'package:bara_flutter/models/app_user.dart';
 import 'package:bara_flutter/models/generated_classes.dart';
+import 'package:bara_flutter/models/local_store.dart';
 import 'package:bara_flutter/models/profile.dart';
 import 'package:bara_flutter/models/result.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:logging/logging.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
+import 'package:watch_it/watch_it.dart';
 
 class SupabaseAuth extends ChangeNotifier {
   final log = Logger('SupabaseAuth');
@@ -22,6 +24,8 @@ class SupabaseAuth extends ChangeNotifier {
 
   bool get isLoading => _isLoading;
 
+  String get authMessage => _authMessage;
+
   // the app user
   AppUser? _appUser;
   set appUser(AppUser? value) {
@@ -33,6 +37,12 @@ class SupabaseAuth extends ChangeNotifier {
   bool _isLoading = false;
   set isLoading(bool value) {
     _isLoading = value;
+    notifyListeners();
+  }
+
+  String _authMessage = '';
+  set authMessage(String value) {
+    _authMessage = value;
     notifyListeners();
   }
 
@@ -62,11 +72,7 @@ class SupabaseAuth extends ChangeNotifier {
           default:
             break;
         }
-        // if (_redirecting) return;
-        // final session = data.session;
-        // if (session != null) {
-        //   _redirecting = true;
-        // }
+        authMessage = '';
       },
       onError: (error) {
         if (error is AuthException) {
@@ -78,7 +84,7 @@ class SupabaseAuth extends ChangeNotifier {
     );
   }
 
-  Future<Result<String, Exception>> signInWithMagicLink(String email) async {
+  Future<void> signInWithMagicLink(String email) async {
     log.info("Signing in with magic link email: $email");
     isLoading = true;
 
@@ -89,9 +95,12 @@ class SupabaseAuth extends ChangeNotifier {
         email: email,
         emailRedirectTo: kIsWeb ? null : redirectUrl,
       );
-      return Success('Check your email for a login link!');
+      // Success so save the email to local storage
+      await di<LocalStore>().saveSignInEmail(email);
+
+      authMessage = 'Check your email for a login link!';
     } on Exception catch (e) {
-      return Failure(e);
+      authMessage = '$e';
     } finally {
       isLoading = false;
     }

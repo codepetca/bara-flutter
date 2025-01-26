@@ -22,13 +22,17 @@ class _SignInViewState extends State<SignInView> {
   final _emailController = TextEditingController();
   final _supabaseAuth = di<SupabaseAuth>();
 
-  String signInMessage = '';
-
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+
     final savedSignInEmail =
         watchValue((LocalStore store) => store.signInEmail);
     _emailController.text = savedSignInEmail;
+
+    final authMessage =
+        watchPropertyValue((SupabaseAuth auth) => auth.authMessage);
+
     return Scaffold(
       appBar: AppBar(
         title: Text(''),
@@ -55,8 +59,11 @@ class _SignInViewState extends State<SignInView> {
                 validator: validateEmail,
               ),
               Spacer(),
+              Text(
+                authMessage,
+                style: theme.textTheme.bodyMedium,
+              ),
               Spacer(),
-              Text(signInMessage),
               SignInButton(action: _onSignIn),
             ],
           ),
@@ -68,25 +75,7 @@ class _SignInViewState extends State<SignInView> {
   void _onSignIn() async {
     if (_formKey.currentState!.validate()) {
       final email = _emailController.text;
-
-      if (mounted) {
-        setState(() => signInMessage = 'Check your email for a login link!');
-      }
-      final result = await _supabaseAuth.signInWithMagicLink(email);
-
-      switch (result) {
-        case Success(value: final message):
-          await di<LocalStore>().saveSignInEmail(email);
-          if (mounted) {
-            setState(() => signInMessage = message);
-          }
-          log.info(message);
-        case Failure(exception: final exception):
-          if (mounted) {
-            setState(() => signInMessage = '$exception');
-          }
-          log.severe(exception);
-      }
+      await _supabaseAuth.signInWithMagicLink(email);
     }
   }
 }

@@ -11,6 +11,8 @@ class StudentMainContent extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+
     return Column(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
@@ -20,14 +22,14 @@ class StudentMainContent extends StatelessWidget {
         ] else if (upcomingSection != null) ...[
           Text(
             "Coming up...",
-            style: TextStyle(fontSize: 24, color: Colors.grey),
+            style: theme.textTheme.titleLarge,
           ),
           SectionDetail(studentSection: upcomingSection!),
           SizedBox(height: 16),
         ] else ...[
           Text(
             "All done for today!",
-            style: TextStyle(fontSize: 24),
+            style: theme.textTheme.titleLarge,
           ),
         ],
       ],

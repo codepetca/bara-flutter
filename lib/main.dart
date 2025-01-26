@@ -1,4 +1,5 @@
 import 'package:bara_flutter/models/app_user.dart';
+import 'package:bara_flutter/models/local_store.dart';
 import 'package:bara_flutter/models/profile.dart';
 import 'package:bara_flutter/services/supabase_auth.dart';
 import 'package:bara_flutter/services/timer_service.dart';
@@ -9,6 +10,8 @@ import 'package:bara_flutter/views/sign_in/sign_in_view.dart';
 import 'package:bara_flutter/views/student/student_home.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:google_fonts/google_fonts.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:watch_it/watch_it.dart';
 
@@ -27,6 +30,8 @@ Future<void> main() async {
   // Register the services
   di.registerSingleton<SupabaseAuth>(SupabaseAuth());
   di.registerSingleton<TimerService>(TimerService());
+  final sharedPreferences = await SharedPreferences.getInstance();
+  di.registerSingleton<LocalStore>(LocalStore(sharedPreferences));
 
   // Begin authentication
   final supabaseAuth = di<SupabaseAuth>();
@@ -43,12 +48,10 @@ class MainApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       title: 'Flutter Demo',
-      theme: ThemeData(
-        primarySwatch: Colors.blue,
-      ),
+      themeMode: ThemeMode.system,
       initialRoute: '/',
       routes: {
-        Routes.root: (context) => App(),
+        Routes.app: (context) => App(),
         Routes.signIn: (context) => SignInView(),
         Routes.studentHome: (context) => StudentHome(),
         Routes.profile: (context) => ProfileView(),
@@ -59,9 +62,28 @@ class MainApp extends StatelessWidget {
 }
 
 class Routes {
-  static const String root = '/';
+  static const String app = '/';
   static const String signIn = '/sign_in';
   static const String studentHome = '/student_home';
   static const String profile = '/profile';
   static const String info = '/info';
+}
+
+class AppTheme {
+  static final light = ThemeData(
+    colorScheme: ColorScheme.fromSeed(
+      seedColor: Colors.amber,
+      brightness: Brightness.light,
+    ),
+    fontFamily: GoogleFonts.roboto().fontFamily,
+    fontFamilyFallback: [GoogleFonts.lato().fontFamily!],
+    useMaterial3: true,
+  );
+
+  static final dark = light.copyWith(
+    colorScheme: ColorScheme.fromSeed(
+      seedColor: Colors.amber,
+      brightness: Brightness.dark,
+    ),
+  );
 }

@@ -1,6 +1,5 @@
 import 'package:bara_flutter/models/generated_classes.dart';
 import 'package:bara_flutter/util/datetime_x.dart';
-import 'package:bara_flutter/util/datetime_x.dart';
 
 class StudentSection {
   final DateTime date;

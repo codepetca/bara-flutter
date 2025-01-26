@@ -94,10 +94,12 @@ class _StudentHomeState extends State<StudentHome> {
     final date = '2025-01-10';
     final fetchedSections =
         await Supabase.instance.fetchStudentHomeData(studentId, date);
-    setState(() {
-      sections = fetchedSections;
-      _updateCurrentSection();
-    });
+    if (mounted) {
+      setState(() {
+        sections = fetchedSections;
+        _updateCurrentSection();
+      });
+    }
   }
 
   void _updateCurrentSection() {
@@ -106,11 +108,14 @@ class _StudentHomeState extends State<StudentHome> {
     final currentDate = DateTime.now();
     if (sections.isEmpty) {
       log.info("No sections found for today");
+      return;
+    }
+
+    if (mounted) {
       setState(() {
         upcomingSection = null;
         currentSection = null;
       });
-      return;
     }
 
     final orderedSectionsByStartTime = sections
@@ -134,19 +139,23 @@ class _StudentHomeState extends State<StudentHome> {
     }
 
     if (currentDate.isAfter(orderedSectionsByEndTime.last.endTime)) {
-      setState(() {
-        currentSection = null;
-        upcomingSection = null;
-      });
+      if (mounted) {
+        setState(() {
+          currentSection = null;
+          upcomingSection = null;
+        });
+      }
       return;
     }
 
     for (var section in orderedSectionsByStartTime) {
       if (currentDate.isBefore(section.startTime)) {
-        setState(() {
-          currentSection = null;
-          upcomingSection = section;
-        });
+        if (mounted) {
+          setState(() {
+            currentSection = null;
+            upcomingSection = section;
+          });
+        }
         return;
       }
     }

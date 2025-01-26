@@ -5,9 +5,10 @@ class AppError implements Exception {
   AppError(this.message);
 
   // Static factory constructors for specific errors
+  static AppError authError(String message) => AppError(message);
   static AppError invalidRedirectUrl() => AppError("Invalid redirect URL.");
   static AppError fetchError(String message) => AppError(message);
   static AppError noSupabaseSession() => AppError("No Supabase session found.");
   static AppError unimplemented() => AppError("Feature is unimplemented.");
-  static AppError unknown() => AppError("An unknown error occurred.");
+  static AppError unknown(String message) => AppError(message);
 }

@@ -1,5 +1,8 @@
+import 'package:bara_flutter/services/supabase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:logging/logging.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:watch_it/watch_it.dart';
 
 class InfoView extends StatelessWidget {
   final log = Logger('InfoView');
@@ -46,12 +49,14 @@ class InfoView extends StatelessWidget {
   }
 
   // TODO: Reset saved data
-  void onResetSavedData() {
-    log.warning('onResetSavedData not implemented');
+  void onResetSavedData() async {
+    log.info('Clearing saved data');
+    di<SharedPreferences>().clear();
   }
 
   // TODO: Sign out
-  void onSignOut() {
-    log.warning('OnSignOut not implemented');
+  void onSignOut() async {
+    log.info('Signing out');
+    di<SupabaseAuth>().signOut();
   }
 }

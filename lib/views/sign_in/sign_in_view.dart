@@ -1,13 +1,14 @@
 import 'package:bara_flutter/main.dart';
+import 'package:bara_flutter/models/local_store.dart';
+import 'package:bara_flutter/models/result.dart';
 import 'package:bara_flutter/services/supabase_auth.dart';
 import 'package:bara_flutter/util/validators.dart';
 import 'package:bara_flutter/views/sign_in/sign_in_button.dart';
 import 'package:flutter/material.dart';
-import 'package:shared_preferences/shared_preferences.dart';
-import 'package:bara_flutter/util/shared_preferences_x.dart';
+import 'package:logging/logging.dart';
 import 'package:watch_it/watch_it.dart';
 
-class SignInView extends StatefulWidget {
+class SignInView extends WatchingStatefulWidget {
   const SignInView({super.key});
 
   @override
@@ -15,19 +16,19 @@ class SignInView extends StatefulWidget {
 }
 
 class _SignInViewState extends State<SignInView> {
+  final log = Logger('SignInView');
+
   final _formKey = GlobalKey<FormState>();
   final _emailController = TextEditingController();
   final _supabaseAuth = di<SupabaseAuth>();
 
-  late final SharedPreferences prefs;
-  @override
-  void initState() {
-    super.initState();
-    _loadSignInEmail();
-  }
+  String signInMessage = '';
 
   @override
   Widget build(BuildContext context) {
+    final savedSignInEmail =
+        watchValue((LocalStore store) => store.signInEmail);
+    _emailController.text = savedSignInEmail;
     return Scaffold(
       appBar: AppBar(
         title: Text(''),
@@ -54,6 +55,8 @@ class _SignInViewState extends State<SignInView> {
                 validator: validateEmail,
               ),
               Spacer(),
+              Spacer(),
+              Text(signInMessage),
               SignInButton(action: _onSignIn),
             ],
           ),
@@ -62,23 +65,28 @@ class _SignInViewState extends State<SignInView> {
     );
   }
 
-  Future<void> _loadSignInEmail() async {
-    prefs = await SharedPreferences.getInstance();
-    final savedEmail = prefs.getSignInEmail();
-    if (savedEmail != null) {
-      setState(() {
-        _emailController.text = savedEmail;
-      });
-    }
-  }
-
   void _onSignIn() async {
     if (_formKey.currentState!.validate()) {
       final email = _emailController.text;
-      _supabaseAuth.signInWithMagicLinkTest(email);
 
-      // Save email to SharedPreferences
-      await prefs.saveSignInEmail(email);
+      if (mounted) {
+        setState(() => signInMessage = 'Check your email for a login link!');
+      }
+      final result = await _supabaseAuth.signInWithMagicLink(email);
+
+      switch (result) {
+        case Success(value: final message):
+          await di<LocalStore>().saveSignInEmail(email);
+          if (mounted) {
+            setState(() => signInMessage = message);
+          }
+          log.info(message);
+        case Failure(exception: final exception):
+          if (mounted) {
+            setState(() => signInMessage = '$exception');
+          }
+          log.severe(exception);
+      }
     }
   }
 }

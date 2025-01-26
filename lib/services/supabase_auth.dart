@@ -1,10 +1,11 @@
 import 'dart:async';
-import 'dart:math';
 
 import 'package:bara_flutter/models/app_user.dart';
+import 'package:bara_flutter/models/generated_classes.dart';
 import 'package:bara_flutter/models/profile.dart';
-import 'package:bara_flutter/util/app_error.dart';
+import 'package:bara_flutter/models/result.dart';
 import 'package:flutter/foundation.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:logging/logging.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
@@ -18,12 +19,14 @@ class SupabaseAuth extends ChangeNotifier {
   // ------------------------------
   AppUser? get appUser => _appUser;
   bool get isAuthenticated => appUser != null; // Convenience getter
+
   bool get isLoading => _isLoading;
 
   // the app user
   AppUser? _appUser;
   set appUser(AppUser? value) {
     _appUser = value;
+    log.info('AppUser updated: $value');
     notifyListeners();
   }
 
@@ -49,11 +52,11 @@ class SupabaseAuth extends ChangeNotifier {
         switch (event) {
           case AuthChangeEvent.initialSession:
             if (data.session == null) return;
-            final supabaseUser =
-                await supabase.auth.getUser().then((onValue) => onValue.user);
+            final supabaseUser = data.session?.user;
             await _updateAppUser(supabaseUser);
           case AuthChangeEvent.signedIn:
-            await _updateAppUser(data.session?.user);
+            final supabaseUser = data.session?.user;
+            await _updateAppUser(supabaseUser);
           case AuthChangeEvent.signedOut:
             await _updateAppUser(null);
           default:
@@ -75,32 +78,27 @@ class SupabaseAuth extends ChangeNotifier {
     );
   }
 
-  Future<String> signInWithMagicLink(String email) async {
+  Future<Result<String, Exception>> signInWithMagicLink(String email) async {
     log.info("Signing in with magic link email: $email");
     isLoading = true;
 
     try {
       // Send magic link to email
+      final redirectUrl = dotenv.env['SUPABASE_REDIRECT_URL']!;
       await Supabase.instance.client.auth.signInWithOtp(
         email: email,
-        emailRedirectTo:
-            kIsWeb ? null : 'ca.codepet.bara-flutter://login-callback/',
+        emailRedirectTo: kIsWeb ? null : redirectUrl,
       );
-      // Success
-      return 'Check your email for a login link!';
-    } on AuthException catch (e) {
-      log.warning("Auth error: ${e.message}");
-      return e.message;
-    } catch (e) {
-      log.warning("Unexpected error: $e");
-      return "An unexpected error occurred: $e";
+      return Success('Check your email for a login link!');
+    } on Exception catch (e) {
+      return Failure(e);
     } finally {
       isLoading = false;
     }
   }
 
   // Sign out the user
-  void signOut() async {
+  Future<void> signOut() async {
     log.info("Signing out...");
     await Supabase.instance.client.auth.signOut();
     appUser = null; // Reset app user
@@ -110,8 +108,13 @@ class SupabaseAuth extends ChangeNotifier {
   Future<void> _updateAppUser(User? supabaseUser) async {
     if (supabaseUser != null) {
       log.info("Setting AppUser to $supabaseUser");
+
+      if (supabaseUser.email == null) {
+        throw Exception("User email is null when trying to fetch profile");
+      }
       // Fetch the user's profile
       final profile = await _fetchUserProfile(email: supabaseUser.email!);
+
       // Set the AppUser
       appUser = AppUser(profile: profile);
     } else {
@@ -122,42 +125,48 @@ class SupabaseAuth extends ChangeNotifier {
 
   Future<Profile> _fetchUserProfile({required String email}) async {
     print("Fetching user profile for email: $email");
+    final vProfileList = await Supabase.instance.client.v_profile
+        .select()
+        .eq("email", email)
+        .withConverter(VProfile.converter);
 
-    return Profile.sampleStudentProfile(email: email);
-    // TODO: Implement fetching
+    final profile =
+        vProfileList.map((vProfile) => Profile.from(vProfile)).toList().first;
+
+    return profile;
   }
 
   /// ------------------------------
   /// Only for Development
   /// ------------------------------
-  Future<void> signInWithMagicLinkTest(String email) async {
-    log.info("Signing in with email: $email");
-    isLoading = true;
-    // Wait for 2 seconds to simulate the sign in process
-    await Future.delayed(const Duration(seconds: 2));
+  // Future<void> signInWithMagicLinkTest(String email) async {
+  //   log.info("Signing in with email: $email");
+  //   isLoading = true;
+  //   // Wait for 2 seconds to simulate the sign in process
+  //   await Future.delayed(const Duration(seconds: 2));
 
-    // Fetch user profile
-    final profile = await _fetchUserProfileTest(email: email);
-    log.info("User profile: $profile");
+  //   // Fetch user profile
+  //   final profile = await _fetchUserProfileTest(email: email);
+  //   log.info("User profile: $profile");
 
-    // Set app user on successful sign in
-    appUser = AppUser(profile: profile);
+  //   // Set app user on successful sign in
+  //   appUser = AppUser(profile: profile);
 
-    isLoading = false;
-  }
+  //   isLoading = false;
+  // }
 
-  Future<Profile> _fetchUserProfileTest({required String email}) {
-    return Future.delayed(
-      const Duration(seconds: 1),
-      () {
-        // Simulate error once in a while while fetching profile
-        if (Random().nextDouble() < 0.1) {
-          throw AppError.fetchError("Error fetching user profile");
-        }
-        return Profile.sampleStudentProfile(email: email);
-      },
-    );
-  }
+  // Future<Profile> _fetchUserProfileTest({required String email}) {
+  //   return Future.delayed(
+  //     const Duration(seconds: 1),
+  //     () {
+  //       // Simulate error once in a while while fetching profile
+  //       if (Random().nextDouble() < 0.1) {
+  //         throw AppError.fetchError("Error fetching user profile");
+  //       }
+  //       return Profile.sampleStudentProfile(email: email);
+  //     },
+  //   );
+  // }
 
   @override
   void dispose() {

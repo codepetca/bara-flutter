@@ -3,7 +3,7 @@ import 'package:intl/intl.dart';
 extension DateTimeX on DateTime {
   DateTime toToday() {
     final now = DateTime.now().toUtc();
-    return DateTime.utc(
+    final utcDateTime = DateTime.utc(
       now.year,
       now.month,
       now.day,
@@ -13,6 +13,9 @@ extension DateTimeX on DateTime {
       millisecond,
       microsecond,
     );
+
+    // Convert the UTC time to the local time zone
+    return utcDateTime.toLocal();
   }
 
   // Formats the date as an ISO 8601 string in the "yyyy-MM-dd" format.

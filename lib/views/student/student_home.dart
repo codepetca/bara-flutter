@@ -1,5 +1,6 @@
 import 'package:bara_flutter/main.dart';
 import 'package:bara_flutter/models/student_section.dart';
+import 'package:bara_flutter/services/supabase_auth.dart';
 import 'package:bara_flutter/services/timer_service.dart';
 import 'package:bara_flutter/util/datetime_x.dart';
 import 'package:bara_flutter/views/student/student_scan_button.dart';
@@ -30,7 +31,7 @@ class _StudentHomeState extends State<StudentHome> {
     super.initState();
     // Fetch student data
     _onFetchStudentData();
-    // Update current section
+    // Update current section on timer tick every minute
     _timer.startTimer(onTick: _updateCurrentSection);
   }
 
@@ -90,8 +91,16 @@ class _StudentHomeState extends State<StudentHome> {
   // save fetched data to shared preferences
   Future<void> _onFetchStudentData() async {
     log.info('Fetching student data...');
-    final studentId = '56ad7055-3d70-4b53-8e4f-8d24832a285f';
-    final date = '2025-01-10';
+    // final studentId = '56ad7055-3d70-4b53-8e4f-8d24832a285f';
+    // final date = '2025-01-10';
+    final appUser = di<SupabaseAuth>().appUser;
+    if (appUser == null) {
+      log.warning('App user is null');
+      return;
+    }
+    final studentId = appUser.profile.id;
+    final date = DateTime.now().formattedDate;
+    log.info('Student ID: $studentId, Date: $date');
     final fetchedSections =
         await Supabase.instance.fetchStudentHomeData(studentId, date);
     if (mounted) {
@@ -102,31 +111,36 @@ class _StudentHomeState extends State<StudentHome> {
     }
   }
 
+  // Update current section based on current time
   void _updateCurrentSection() {
     log.info("Updating current section...");
 
-    final currentDate = DateTime.now();
+    // If there are no sections, set current and upcoming to null
     if (sections.isEmpty) {
       log.info("No sections found for today");
+      if (mounted) {
+        setState(() {
+          upcomingSection = null;
+          currentSection = null;
+        });
+      }
       return;
     }
 
-    if (mounted) {
-      setState(() {
-        upcomingSection = null;
-        currentSection = null;
-      });
-    }
+    // Get the current datetime
+    final currentDate = DateTime.now();
 
+    // Sort sections by start and end time
     final orderedSectionsByStartTime = sections
       ..sort((a, b) => a.startTime.compareTo(b.startTime));
     final orderedSectionsByEndTime = sections
       ..sort((a, b) => a.endTime.compareTo(b.endTime));
 
+    // Set the current section if it exists
+    final earlyEntryMinutes = Duration(minutes: 10);
     for (var section in orderedSectionsByStartTime) {
-      final earlyEntrySeconds = Duration(minutes: 10);
       final startTimeWithEarlyEntry =
-          section.startTime.subtract(earlyEntrySeconds);
+          section.startTime.subtract(earlyEntryMinutes);
 
       if (currentDate.isAfter(startTimeWithEarlyEntry) &&
           currentDate.isBefore(section.endTime)) {
@@ -138,7 +152,10 @@ class _StudentHomeState extends State<StudentHome> {
       }
     }
 
+    // If the current time is after the last section, set current and upcoming to null
     if (currentDate.isAfter(orderedSectionsByEndTime.last.endTime)) {
+      log.info(
+          "Last section has ended ${orderedSectionsByEndTime.last.endTime}");
       if (mounted) {
         setState(() {
           currentSection = null;
@@ -148,7 +165,9 @@ class _StudentHomeState extends State<StudentHome> {
       return;
     }
 
+    // Set the upcoming section if it exists
     for (var section in orderedSectionsByStartTime) {
+      log.info("Upcoming section: $section");
       if (currentDate.isBefore(section.startTime)) {
         if (mounted) {
           setState(() {
@@ -160,6 +179,8 @@ class _StudentHomeState extends State<StudentHome> {
       }
     }
 
-    log.info("Logic error in StudentHomeView _updateCurrentSection()");
+    // This should never be reached
+    log.severe(
+        "This line should not be reached. Logic error in StudentHomeView _updateCurrentSection()");
   }
 }

@@ -16,14 +16,6 @@ extension SupabaseX on Supabase {
     log.info(teachers.map((teacher) => teacher.toJson()).toList().toString());
   }
 
-  Future<List<StudentSection>> fetchStudentHomeDataSample() async {
-    log.info('Fetching SAMPLE student sections...');
-    // Delay 1 second
-    await Future.delayed(Duration(seconds: 1));
-    final studentSections = StudentSection.sampleData();
-    return studentSections;
-  }
-
   Future<List<StudentSection>> fetchStudentHomeData(
       String studentId, String date) async {
     log.info(

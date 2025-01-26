@@ -31,7 +31,7 @@ class SectionDetail extends StatelessWidget {
           'End ${studentSection.endTime.formattedTimeShort}',
           style: theme.textTheme.headlineSmall,
         ),
-        SizedBox(height: 8),
+        SizedBox(height: 24),
         studentSection.scanSubmitted
             ? Icon(
                 Icons.check_outlined,

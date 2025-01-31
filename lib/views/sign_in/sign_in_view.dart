@@ -1,12 +1,16 @@
 import 'package:bara_flutter/main.dart';
 import 'package:bara_flutter/models/local_store.dart';
-import 'package:bara_flutter/models/result.dart';
 import 'package:bara_flutter/services/supabase_auth.dart';
 import 'package:bara_flutter/util/validators.dart';
 import 'package:bara_flutter/views/sign_in/sign_in_button.dart';
 import 'package:flutter/material.dart';
 import 'package:logging/logging.dart';
 import 'package:watch_it/watch_it.dart';
+
+enum SignInMethod {
+  email,
+  magicLink,
+}
 
 class SignInView extends WatchingStatefulWidget {
   const SignInView({super.key});
@@ -18,9 +22,11 @@ class SignInView extends WatchingStatefulWidget {
 class _SignInViewState extends State<SignInView> {
   final log = Logger('SignInView');
 
+  final _signInMethod = SignInMethod.email;
+  final _supabaseAuth = di<SupabaseAuth>();
   final _formKey = GlobalKey<FormState>();
   final _emailController = TextEditingController();
-  final _supabaseAuth = di<SupabaseAuth>();
+  final _passwordController = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
@@ -50,21 +56,17 @@ class _SignInViewState extends State<SignInView> {
           child: Column(
             children: [
               Spacer(),
-              TextFormField(
-                controller: _emailController,
-                decoration: InputDecoration(
-                  labelText: 'School Email',
-                  border: OutlineInputBorder(),
-                ),
-                validator: validateEmail,
-              ),
+              SizedBox(height: 16),
+              _buildEmailTextField(),
+              if (_signInMethod == SignInMethod.email)
+                _buildPasswordTextField(),
               Spacer(),
               Text(
                 authMessage,
                 style: theme.textTheme.bodyMedium,
               ),
               Spacer(),
-              SignInButton(action: _onSignIn),
+              SignInButton(action: _onSignInButtonTapped),
             ],
           ),
         ),
@@ -72,10 +74,45 @@ class _SignInViewState extends State<SignInView> {
     );
   }
 
-  void _onSignIn() async {
+  // Email text field
+  Widget _buildEmailTextField() {
+    return TextFormField(
+      controller: _emailController,
+      decoration: InputDecoration(
+        labelText: 'School Email',
+        border: OutlineInputBorder(),
+      ),
+      validator: validateEmail,
+    );
+  }
+
+  // Password text field
+  Widget _buildPasswordTextField() {
+    return TextFormField(
+      controller: _passwordController,
+      decoration: InputDecoration(
+        labelText: 'Password',
+        border: OutlineInputBorder(),
+      ),
+      validator: validatePassword,
+      obscureText: true,
+    );
+  }
+
+  // Sign in
+  void _onSignInButtonTapped() async {
     if (_formKey.currentState!.validate()) {
       final email = _emailController.text;
-      await _supabaseAuth.signInWithMagicLink(email);
+
+      switch (_signInMethod) {
+        case SignInMethod.email:
+          final password = _passwordController.text;
+          await _supabaseAuth.signInWithEmail(email, password);
+          break;
+        case SignInMethod.magicLink:
+          await _supabaseAuth.signInWithMagicLink(email);
+          break;
+      }
     }
   }
 }

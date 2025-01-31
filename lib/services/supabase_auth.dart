@@ -84,6 +84,7 @@ class SupabaseAuth extends ChangeNotifier {
     );
   }
 
+  /// Sign in with magiclink
   Future<void> signInWithMagicLink(String email) async {
     log.info("Signing in with magic link email: $email");
     isLoading = true;
@@ -99,6 +100,27 @@ class SupabaseAuth extends ChangeNotifier {
       await di<LocalStore>().saveSignInEmail(email);
 
       authMessage = 'Check your email for a login link!';
+    } on Exception catch (e) {
+      authMessage = '$e';
+    } finally {
+      isLoading = false;
+    }
+  }
+
+  /// Sign in with email and password
+  Future<void> signInWithEmail(String email, String password) async {
+    log.info("Signing in with email: $email");
+    isLoading = true;
+
+    try {
+      // Sign in with email and password
+      await Supabase.instance.client.auth.signInWithPassword(
+        email: email,
+        password: password,
+      );
+      authMessage = 'Sign in successful!';
+      // Save the email to local storage
+      await di<LocalStore>().saveSignInEmail(email);
     } on Exception catch (e) {
       authMessage = '$e';
     } finally {

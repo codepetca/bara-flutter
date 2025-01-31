@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:logging/logging.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:watch_it/watch_it.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class InfoView extends StatelessWidget {
   final log = Logger('InfoView');
@@ -19,8 +20,13 @@ class InfoView extends StatelessWidget {
           Spacer(),
           Padding(
             padding: const EdgeInsets.all(24.0),
+            child: Text('Bara', style: theme.textTheme.displaySmall),
+          ),
+          Padding(
+            padding: const EdgeInsets.all(24.0),
             child: Text(
-                'If you are having issues signing in, you can try tapping the following.'),
+              'Atttendance simplified.',
+            ),
           ),
           Padding(
             padding: const EdgeInsets.all(16.0),
@@ -31,18 +37,8 @@ class InfoView extends StatelessWidget {
                       .copyWith(color: theme.colorScheme.secondary)),
             ),
           ),
-          Padding(
-            padding: const EdgeInsets.all(16.0),
-            child: GestureDetector(
-              onTap: onSignOut,
-              child: Text(
-                'Sign Out',
-                style: theme.textTheme.bodyMedium!
-                    .copyWith(color: theme.colorScheme.secondary),
-              ),
-            ),
-          ),
           Spacer(),
+          _buildFooter(context),
         ],
       ),
     );
@@ -54,9 +50,47 @@ class InfoView extends StatelessWidget {
     di<SharedPreferences>().clear();
   }
 
-  // TODO: Sign out
-  void onSignOut() async {
-    log.info('Signing out');
-    di<SupabaseAuth>().signOut();
+  Widget _buildFooter(BuildContext context) {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        InkWell(
+          onTap: launchPrivacy,
+          child: Text(
+            'Privacy',
+            style: TextStyle(
+              color: Theme.of(context).colorScheme.secondary,
+              fontSize: Theme.of(context).textTheme.bodySmall?.fontSize,
+            ),
+          ),
+        ),
+        const Text('\t | \t'),
+        InkWell(
+          onTap: launchTerms,
+          child: Text(
+            'Terms',
+            style: TextStyle(
+              color: Theme.of(context).colorScheme.secondary,
+              fontSize: Theme.of(context).textTheme.bodySmall?.fontSize,
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+
+  // Launch URLs
+  Future<void> launchPrivacy() async =>
+      launchSite('https://codepet.ca/#/privacy-page');
+
+  Future<void> launchTerms() async =>
+      launchSite('https://codepet.ca/#/terms-page');
+
+  /// Launch a URL
+  Future<void> launchSite(String url) async {
+    final uri = Uri.parse(url);
+    if (!await launchUrl(uri)) {
+      log.warning('Could not launch $url');
+    }
   }
 }

@@ -1,17 +1,27 @@
 import 'dart:async';
 
 class TimerService {
-  Timer? _timer;
+  Timer? _minuteTimer;
+  Timer? _hourTimer;
 
-  void startTimer(
-      {Duration duration = const Duration(minutes: 1),
-      required void Function() onTick}) {
-    _timer = Timer.periodic(duration, (timer) {
+  // Start a timer that ticks every minute
+  void startMinuteTimer({required void Function() onTick}) {
+    Duration duration = const Duration(minutes: 1);
+    _minuteTimer = Timer.periodic(duration, (timer) {
       onTick();
     });
   }
 
-  void stopTimer() {
-    _timer?.cancel();
+  // Start a timer that ticks every hour
+  void startHourTimer({required void Function() onTick}) {
+    Duration duration = const Duration(hours: 1);
+    _hourTimer = Timer.periodic(duration, (timer) {
+      onTick();
+    });
+  }
+
+  void stopTimers() {
+    _minuteTimer?.cancel();
+    _hourTimer?.cancel();
   }
 }

@@ -165,11 +165,12 @@ class SupabaseAuth extends ChangeNotifier {
       // Fetch the user's profile
       final profile = await _fetchUserProfile(email: supabaseUser.email!);
 
+      // Save the email to local storage
+      await di<LocalStore>().saveSignInEmail(supabaseUser.email!);
+
       // Set the AppUser
       appUser = AppUser(profile: profile);
 
-      // Save the email to local storage
-      await di<LocalStore>().saveSignInEmail(supabaseUser.email!);
       return true;
     } else {
       log.info("Setting AppUser to null");

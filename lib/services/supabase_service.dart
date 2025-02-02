@@ -3,6 +3,7 @@ import 'package:bara_flutter/models/generated_classes.dart';
 import 'package:bara_flutter/models/student_section.dart';
 import 'package:bara_flutter/models/teacher_student.dart';
 import 'package:bara_flutter/services/supabase_x.dart';
+import 'package:bara_flutter/services/timer_service.dart';
 import 'package:flutter/material.dart';
 import 'package:logging/logging.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
@@ -13,18 +14,22 @@ class SupabaseService extends ChangeNotifier {
   bool _isLoading = true;
   List<StudentSection> _studentSections = [];
   List<TeacherStudent> _teacherStudents = [];
+  DateTime _lastFetched =
+      DateTime.fromMicrosecondsSinceEpoch(0); // Distant past
+
+  late final TimerService _timerService = TimerService();
+  DateTime _currentDate = DateTime.now(); // current data updated every tick
 
   // ------------------------------
-  // Listenable states
+  // Observable states
   // ------------------------------
   bool get isLoading => _isLoading;
   List<StudentSection> get studentSections => _studentSections;
   List<TeacherStudent> get teacherStudents => _teacherStudents;
-
-  DateTime lastFetched = DateTime.fromMicrosecondsSinceEpoch(0); // Distant past
-
+  DateTime get lastFetched => _lastFetched;
+  DateTime get currentDate => _currentDate;
   // If the last fetch was not today, then we need to refetch
-  bool get requiresRefetch => !DateTime.now().isAtSameMomentAs(
+  bool get requiresRefetch => currentDate.isAtSameMomentAs(
       DateTime(lastFetched.year, lastFetched.month, lastFetched.day));
 
   // ------------------------------
@@ -45,6 +50,16 @@ class SupabaseService extends ChangeNotifier {
     notifyListeners();
   }
 
+  void setCurrentDate(DateTime newDate) {
+    _currentDate = newDate;
+    notifyListeners();
+  }
+
+  void setLastFetched(DateTime newDate) {
+    _lastFetched = newDate;
+    notifyListeners();
+  }
+
   // ------------------------------
   // Methods
   // ------------------------------
@@ -54,9 +69,19 @@ class SupabaseService extends ChangeNotifier {
     log.info('Starting app session for user: ${appUser.profile.email}');
     switch (appUser.profile.role) {
       case ROLE_ENUM.student:
-        await fetchStudentSections(appUser);
+        await fetchStudentSections(appUser); // Fetch student sections
+        // Start the minute timer
+        _timerService.startMinuteTimer(
+          onTick: () => setCurrentDate(DateTime.now()),
+        );
+
       case ROLE_ENUM.teacher:
         await fetchTeacherStudents(appUser);
+        // Start the hour timer
+        _timerService.startHourTimer(
+          onTick: () => setCurrentDate(DateTime.now()),
+        );
+
       default:
         updateStudentSections([]);
         updateTeacherStudents([]);
@@ -65,25 +90,100 @@ class SupabaseService extends ChangeNotifier {
     setLoading(false);
   }
 
+  /// -----------------------------------
+  /// Student Methods
+  /// -----------------------------------
   /// Fetch the sections for the student
   Future<void> fetchStudentSections(AppUser appUser) async {
     final studentId = appUser.profile.id;
-    final today = DateTime.now();
     // Fetch the sections for the student
     final fetchedSections =
-        await Supabase.instance.fetchStudentHomeData(studentId, today);
+        await Supabase.instance.fetchStudentHomeData(studentId, currentDate);
     updateStudentSections(fetchedSections);
-    lastFetched = today;
+    setLastFetched(DateTime.now());
   }
 
+  /// Sort the sections by start time
+  List<StudentSection> get orderedStudentSectionsByStartTime {
+    final sections = List<StudentSection>.from(_studentSections);
+    sections.sort((a, b) => a.startTime.compareTo(b.startTime));
+    return sections;
+  }
+
+  /// Sort the sections by end time
+  List<StudentSection> get orderedStudentSectionsByEndTime {
+    final sections = List<StudentSection>.from(_studentSections);
+    sections.sort((a, b) => a.endTime.compareTo(b.endTime));
+    return sections;
+  }
+
+  /// Day is over
+  bool get dayIsOver {
+    if (_studentSections.isEmpty) return true;
+    final lastSection = orderedStudentSectionsByEndTime.last;
+    return currentDate.isAfter(lastSection.endTime);
+  }
+
+  /// Computed getter that returns the current section if one exists.
+  StudentSection? get currentSection {
+    if (_studentSections.isEmpty || dayIsOver) {
+      return null;
+    }
+    final earlyEntryMinutes = Duration(minutes: 10);
+    for (var section in orderedStudentSectionsByStartTime) {
+      final startTimeWithEarlyEntry =
+          section.startTime.subtract(earlyEntryMinutes);
+
+      if (currentDate.isAfter(startTimeWithEarlyEntry) &&
+          currentDate.isBefore(section.endTime)) {
+        return section;
+      }
+    }
+    return null;
+  }
+
+  /// Computed getter that returns the next upcoming section if one exists.
+  StudentSection? get upcomingSection {
+    // If there is a current section or no more sections for the day, return null
+    if (currentSection != null || dayIsOver) {
+      return null;
+    }
+    for (var section in orderedStudentSectionsByStartTime) {
+      if (currentDate.isBefore(section.startTime)) {
+        return section;
+      }
+    }
+    return null;
+  }
+
+  /// Scan is ready
+  bool get scanIsReady {
+    if (currentSection == null) return false;
+    // If scan already submitted, return false
+    if (currentSection!.scanSubmitted) return false;
+    final currentSectionStartTime = currentSection!.startTime;
+    final earlyEntryMinutes = Duration(minutes: 10);
+    final startTimeWithEarlyEntry =
+        currentSectionStartTime.subtract(earlyEntryMinutes);
+    return currentDate.isAfter(startTimeWithEarlyEntry);
+  }
+
+  /// -----------------------------------
+  /// Teacher Methods
+  /// -----------------------------------
   /// Fetch the students for the teacher
   Future<void> fetchTeacherStudents(AppUser appUser) async {
-    final today = DateTime.now();
     final fetchedTeacherStudents = await Supabase.instance.fetchTeacherHomeData(
       appUser.profile.id,
-      DateTime.now(),
+      currentDate,
     );
     updateTeacherStudents(fetchedTeacherStudents);
-    lastFetched = today;
+    setLastFetched(DateTime.now());
+  }
+
+  @override
+  void dispose() {
+    _timerService.stopTimers();
+    super.dispose();
   }
 }

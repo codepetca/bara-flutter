@@ -1,4 +1,4 @@
-import 'package:bara_flutter/services/supabase_auth.dart';
+import 'package:bara_flutter/models/local_store.dart';
 import 'package:flutter/material.dart';
 import 'package:logging/logging.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -30,11 +30,9 @@ class InfoView extends StatelessWidget {
           ),
           Padding(
             padding: const EdgeInsets.all(16.0),
-            child: GestureDetector(
-              onTap: onResetSavedData,
-              child: Text('Reset saved data',
-                  style: theme.textTheme.bodyMedium!
-                      .copyWith(color: theme.colorScheme.secondary)),
+            child: TextButton(
+              onPressed: onResetSavedData,
+              child: Text('Reset saved data'),
             ),
           ),
           Spacer(),
@@ -47,7 +45,7 @@ class InfoView extends StatelessWidget {
   // TODO: Reset saved data
   void onResetSavedData() async {
     log.info('Clearing saved data');
-    di<SharedPreferences>().clear();
+    di<LocalStore>().clear();
   }
 
   Widget _buildFooter(BuildContext context) {

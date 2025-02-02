@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
 
-class SignInButton extends StatelessWidget {
-  final void Function() action;
-  const SignInButton({super.key, required this.action});
+class Button extends StatelessWidget {
+  final void Function() onTap;
+  final String label;
+  const Button({super.key, required this.label, required this.onTap});
 
   @override
   Widget build(BuildContext context) {
@@ -11,10 +12,10 @@ class SignInButton extends StatelessWidget {
       child: SizedBox(
         width: double.infinity,
         child: ElevatedButton(
-          onPressed: action,
+          onPressed: onTap,
           child: Padding(
             padding: const EdgeInsets.all(24.0),
-            child: Text('Sign In'),
+            child: Text(label),
           ),
         ),
       ),

@@ -1,8 +1,9 @@
 import 'package:bara_flutter/main.dart';
 import 'package:bara_flutter/models/local_store.dart';
 import 'package:bara_flutter/services/supabase_auth.dart';
-import 'package:bara_flutter/util/validators.dart';
-import 'package:bara_flutter/views/sign_in/sign_in_button.dart';
+import 'package:bara_flutter/views/sign_in/email_text_view.dart';
+import 'package:bara_flutter/views/sign_in/password_text_view.dart';
+import 'package:bara_flutter/views/sign_in/button.dart';
 import 'package:flutter/material.dart';
 import 'package:logging/logging.dart';
 import 'package:watch_it/watch_it.dart';
@@ -36,16 +37,14 @@ class _SignInViewState extends State<SignInView> {
         watchValue((LocalStore store) => store.signInEmail);
     _emailController.text = savedSignInEmail;
 
-    final authMessage =
-        watchPropertyValue((SupabaseAuth auth) => auth.authMessage);
+    // final authResponse =
+    //     watchPropertyValue((SupabaseAuth auth) => auth.authResponse);
 
     return Scaffold(
       appBar: AppBar(
         title: Text(''),
         leading: IconButton(
-          onPressed: () {
-            Navigator.pushNamed(context, Routes.info);
-          },
+          onPressed: () => Navigator.pushNamed(context, Routes.info),
           icon: Icon(Icons.info_outline),
         ),
       ),
@@ -56,17 +55,17 @@ class _SignInViewState extends State<SignInView> {
           child: Column(
             children: [
               Spacer(),
+              EmailTextView(_emailController),
               SizedBox(height: 16),
-              _buildEmailTextField(),
               if (_signInMethod == SignInMethod.email)
-                _buildPasswordTextField(),
+                PasswordTextView(_passwordController),
               Spacer(),
-              Text(
-                authMessage,
-                style: theme.textTheme.bodyMedium,
+              // Create account button
+              _createAccountButton(),
+              Button(
+                label: 'Sign In',
+                onTap: _onSignInButtonTapped,
               ),
-              Spacer(),
-              SignInButton(action: _onSignInButtonTapped),
             ],
           ),
         ),
@@ -74,28 +73,11 @@ class _SignInViewState extends State<SignInView> {
     );
   }
 
-  // Email text field
-  Widget _buildEmailTextField() {
-    return TextFormField(
-      controller: _emailController,
-      decoration: InputDecoration(
-        labelText: 'School Email',
-        border: OutlineInputBorder(),
-      ),
-      validator: validateEmail,
-    );
-  }
-
-  // Password text field
-  Widget _buildPasswordTextField() {
-    return TextFormField(
-      controller: _passwordController,
-      decoration: InputDecoration(
-        labelText: 'Password',
-        border: OutlineInputBorder(),
-      ),
-      validator: validatePassword,
-      obscureText: true,
+  // Create account button
+  Widget _createAccountButton() {
+    return TextButton(
+      onPressed: () => Navigator.pushNamed(context, Routes.signUp),
+      child: Text('Create Account'),
     );
   }
 
@@ -103,7 +85,6 @@ class _SignInViewState extends State<SignInView> {
   void _onSignInButtonTapped() async {
     if (_formKey.currentState!.validate()) {
       final email = _emailController.text;
-
       switch (_signInMethod) {
         case SignInMethod.email:
           final password = _passwordController.text;
@@ -114,5 +95,12 @@ class _SignInViewState extends State<SignInView> {
           break;
       }
     }
+  }
+
+  @override
+  void dispose() {
+    _emailController.dispose();
+    _passwordController.dispose();
+    super.dispose();
   }
 }

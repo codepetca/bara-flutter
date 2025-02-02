@@ -31,12 +31,12 @@ class _ProfileViewState extends State<ProfileView> {
               Text(email),
               SizedBox(height: 50),
               ElevatedButton(
-                onPressed: () async {
-                  await supabaseAuth.signOut();
+                onPressed: () {
+                  supabaseAuth.signOut();
                   // Navigate to the app home route and remove all previous routes
                   if (mounted) {
                     Navigator.of(context).pushNamedAndRemoveUntil(
-                      Routes.app,
+                      Routes.auth,
                       (route) => false, // Removes all previous routes
                     );
                   }

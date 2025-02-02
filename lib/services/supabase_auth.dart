@@ -5,6 +5,7 @@ import 'package:bara_flutter/models/generated_classes.dart';
 import 'package:bara_flutter/models/local_store.dart';
 import 'package:bara_flutter/models/profile.dart';
 import 'package:bara_flutter/models/result.dart';
+import 'package:bara_flutter/services/supabase_service.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:logging/logging.dart';
@@ -16,33 +17,27 @@ class SupabaseAuth extends ChangeNotifier {
 
   late final StreamSubscription<AuthState> _authStateSubscription;
 
+  final SupabaseService supabaseService;
+  SupabaseAuth({required this.supabaseService});
+
   // ------------------------------
   // Listenable states
   // ------------------------------
   AppUser? get appUser => _appUser;
   bool get isAuthenticated => appUser != null; // Convenience getter
-
   bool get isLoading => _isLoading;
-
-  String get authMessage => _authMessage;
 
   // the app user
   AppUser? _appUser;
   set appUser(AppUser? value) {
     _appUser = value;
-    log.info('AppUser updated: $value');
+    log.info('AppUser updated: ${value?.profile.email}');
     notifyListeners();
   }
 
   bool _isLoading = false;
   set isLoading(bool value) {
     _isLoading = value;
-    notifyListeners();
-  }
-
-  String _authMessage = '';
-  set authMessage(String value) {
-    _authMessage = value;
     notifyListeners();
   }
 
@@ -63,16 +58,19 @@ class SupabaseAuth extends ChangeNotifier {
           case AuthChangeEvent.initialSession:
             if (data.session == null) return;
             final supabaseUser = data.session?.user;
-            await _updateAppUser(supabaseUser);
+            final success = await _updateAppUser(supabaseUser);
+            // After successful, start the app
+            if (success) await supabaseService.startAppSession(appUser!);
           case AuthChangeEvent.signedIn:
             final supabaseUser = data.session?.user;
-            await _updateAppUser(supabaseUser);
+            final success = await _updateAppUser(supabaseUser);
+            // After successful, start the app
+            if (success) await supabaseService.startAppSession(appUser!);
           case AuthChangeEvent.signedOut:
             await _updateAppUser(null);
           default:
             break;
         }
-        authMessage = '';
       },
       onError: (error) {
         if (error is AuthException) {
@@ -84,7 +82,9 @@ class SupabaseAuth extends ChangeNotifier {
     );
   }
 
+  /// ------------------------------
   /// Sign in with magiclink
+  /// ------------------------------
   Future<void> signInWithMagicLink(String email) async {
     log.info("Signing in with magic link email: $email");
     isLoading = true;
@@ -98,17 +98,36 @@ class SupabaseAuth extends ChangeNotifier {
       );
       // Success so save the email to local storage
       await di<LocalStore>().saveSignInEmail(email);
-
-      authMessage = 'Check your email for a login link!';
     } on Exception catch (e) {
-      authMessage = '$e';
+      log.info('Magic link auth error: $e');
+    } finally {
+      isLoading = false;
+    }
+  }
+
+  /// --------------------------------
+  /// Email and password
+  /// --------------------------------
+  ///
+  /// Sign up with email and password
+  Future<Result<String, Exception>> signUpWithEmail(
+      String email, String password) async {
+    log.info('Signing Up with email: $email');
+    isLoading = true;
+    try {
+      await Supabase.instance.client.auth
+          .signUp(email: email, password: password);
+      return Success('Sign in successful');
+    } on Exception catch (e) {
+      return Failure(e);
     } finally {
       isLoading = false;
     }
   }
 
   /// Sign in with email and password
-  Future<void> signInWithEmail(String email, String password) async {
+  Future<Result<String, Exception>> signInWithEmail(
+      String email, String password) async {
     log.info("Signing in with email: $email");
     isLoading = true;
 
@@ -118,27 +137,27 @@ class SupabaseAuth extends ChangeNotifier {
         email: email,
         password: password,
       );
-      authMessage = 'Sign in successful!';
       // Save the email to local storage
       await di<LocalStore>().saveSignInEmail(email);
+      return Success("Sign in successful");
     } on Exception catch (e) {
-      authMessage = '$e';
+      return Failure(e);
     } finally {
       isLoading = false;
     }
   }
 
   // Sign out the user
-  Future<void> signOut() async {
+  void signOut() async {
     log.info("Signing out...");
     await Supabase.instance.client.auth.signOut();
     appUser = null; // Reset app user
   }
 
   // Update app user from supabase user after successful sign in
-  Future<void> _updateAppUser(User? supabaseUser) async {
+  Future<bool> _updateAppUser(User? supabaseUser) async {
     if (supabaseUser != null) {
-      log.info("Setting AppUser to $supabaseUser");
+      log.info("Setting AppUser with email: ${supabaseUser.email}");
 
       if (supabaseUser.email == null) {
         throw Exception("User email is null when trying to fetch profile");
@@ -148,57 +167,33 @@ class SupabaseAuth extends ChangeNotifier {
 
       // Set the AppUser
       appUser = AppUser(profile: profile);
+
+      // Save the email to local storage
+      await di<LocalStore>().saveSignInEmail(supabaseUser.email!);
+      return true;
     } else {
       log.info("Setting AppUser to null");
       appUser = null;
+      return false;
     }
   }
 
   Future<Profile> _fetchUserProfile({required String email}) async {
-    print("Fetching user profile for email: $email");
+    log.info("Fetching user profile for email: $email");
     final vProfileList = await Supabase.instance.client.v_profile
         .select()
         .eq("email", email)
         .withConverter(VProfile.converter);
-
+    log.info('vProfileList: ${vProfileList.first.email}');
     final profile =
         vProfileList.map((vProfile) => Profile.from(vProfile)).toList().first;
 
     return profile;
   }
 
-  /// ------------------------------
-  /// Only for Development
-  /// ------------------------------
-  // Future<void> signInWithMagicLinkTest(String email) async {
-  //   log.info("Signing in with email: $email");
-  //   isLoading = true;
-  //   // Wait for 2 seconds to simulate the sign in process
-  //   await Future.delayed(const Duration(seconds: 2));
-
-  //   // Fetch user profile
-  //   final profile = await _fetchUserProfileTest(email: email);
-  //   log.info("User profile: $profile");
-
-  //   // Set app user on successful sign in
-  //   appUser = AppUser(profile: profile);
-
-  //   isLoading = false;
-  // }
-
-  // Future<Profile> _fetchUserProfileTest({required String email}) {
-  //   return Future.delayed(
-  //     const Duration(seconds: 1),
-  //     () {
-  //       // Simulate error once in a while while fetching profile
-  //       if (Random().nextDouble() < 0.1) {
-  //         throw AppError.fetchError("Error fetching user profile");
-  //       }
-  //       return Profile.sampleStudentProfile(email: email);
-  //     },
-  //   );
-  // }
-
+  // ------------------------------
+  // Clean up
+  // ------------------------------
   @override
   void dispose() {
     _authStateSubscription.cancel();

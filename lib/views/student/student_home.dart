@@ -45,9 +45,7 @@ class _StudentHomeState extends State<StudentHome> {
         actions: [
           IconButton(
             icon: Icon(Icons.person),
-            onPressed: () {
-              Navigator.pushNamed(context, Routes.profile);
-            },
+            onPressed: () => Navigator.pushNamed(context, Routes.profile),
           ),
         ],
       ),
@@ -119,8 +117,8 @@ class _StudentHomeState extends State<StudentHome> {
       return;
     }
     final studentId = appUser.profile.id;
-    final date = DateTime.now().formattedDate;
-    log.info('Student ID: $studentId, Date: $date');
+    final date = DateTime.now();
+
     final fetchedSections =
         await Supabase.instance.fetchStudentHomeData(studentId, date);
     if (mounted) {
@@ -164,10 +162,12 @@ class _StudentHomeState extends State<StudentHome> {
 
       if (currentDate.isAfter(startTimeWithEarlyEntry) &&
           currentDate.isBefore(section.endTime)) {
-        setState(() {
-          currentSection = section;
-          upcomingSection = null;
-        });
+        if (mounted) {
+          setState(() {
+            currentSection = section;
+            upcomingSection = null;
+          });
+        }
         return;
       }
     }
@@ -203,4 +203,10 @@ class _StudentHomeState extends State<StudentHome> {
     log.severe(
         "This line should not be reached. Logic error in StudentHomeView _updateCurrentSection()");
   }
+
+  // @override
+  // void dispose() {
+  //   _timer.stopTimer();
+  //   super.dispose();
+  // }
 }

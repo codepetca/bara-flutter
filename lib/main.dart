@@ -2,11 +2,14 @@ import 'package:bara_flutter/models/app_user.dart';
 import 'package:bara_flutter/models/local_store.dart';
 import 'package:bara_flutter/models/profile.dart';
 import 'package:bara_flutter/services/supabase_auth.dart';
+import 'package:bara_flutter/services/supabase_service.dart';
 import 'package:bara_flutter/services/timer_service.dart';
-import 'package:bara_flutter/views/app/app.dart';
+import 'package:bara_flutter/views/app/app_view.dart';
+import 'package:bara_flutter/views/app/auth_gate.dart';
 import 'package:bara_flutter/views/app/profile_view.dart';
 import 'package:bara_flutter/views/sign_in/info_view.dart';
 import 'package:bara_flutter/views/sign_in/sign_in_view.dart';
+import 'package:bara_flutter/views/sign_in/sign_up_view.dart';
 import 'package:bara_flutter/views/student/student_home.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
@@ -28,7 +31,10 @@ Future<void> main() async {
   );
 
   // Register the services
-  di.registerSingleton<SupabaseAuth>(SupabaseAuth());
+  di.registerSingleton<SupabaseService>(SupabaseService());
+  di.registerSingleton<SupabaseAuth>(
+    SupabaseAuth(supabaseService: di<SupabaseService>()),
+  );
   di.registerSingleton<TimerService>(TimerService());
   final sharedPreferences = await SharedPreferences.getInstance();
   di.registerSingleton<LocalStore>(LocalStore(sharedPreferences));
@@ -49,10 +55,12 @@ class MainApp extends StatelessWidget {
     return MaterialApp(
       title: 'Flutter Demo',
       themeMode: ThemeMode.system,
-      initialRoute: '/',
+      initialRoute: Routes.auth,
       routes: {
-        Routes.app: (context) => App(),
+        Routes.auth: (context) => AuthGate(),
+        Routes.app: (context) => AppView(),
         Routes.signIn: (context) => SignInView(),
+        Routes.signUp: (context) => SignUpView(),
         Routes.studentHome: (context) => StudentHome(),
         Routes.profile: (context) => ProfileView(),
         Routes.info: (context) => InfoView(),
@@ -62,8 +70,10 @@ class MainApp extends StatelessWidget {
 }
 
 class Routes {
-  static const String app = '/';
+  static const String auth = '/';
+  static const String app = '/app';
   static const String signIn = '/sign_in';
+  static const String signUp = '/sign_up';
   static const String studentHome = '/student_home';
   static const String profile = '/profile';
   static const String info = '/info';

@@ -20,4 +20,9 @@ class AppUser extends ChangeNotifier {
       notifyListeners();
     }
   }
+
+  @override
+  String toString() {
+    return 'AppUser profile: $_profile';
+  }
 }

@@ -11,7 +11,7 @@ class StudentSection {
   final DateTime endTime;
   final DateTime? entryTime;
 
-  var scanSubmitted = false;
+  bool get scanSubmitted => entryTime != null;
 
   StudentSection({
     required this.date,
@@ -22,7 +22,6 @@ class StudentSection {
     required this.startTime,
     required this.endTime,
     this.entryTime,
-    this.scanSubmitted = false,
   });
 
   // Factory constructor to create a StudentSection from VForStudentHome
@@ -35,13 +34,16 @@ class StudentSection {
       sectionCode: vForStudentHome.sectionCode!,
       startTime: vForStudentHome.startTime!.toToday(),
       endTime: vForStudentHome.endTime!.toToday(),
-      entryTime: vForStudentHome.entryTime,
+      entryTime:
+          vForStudentHome.entryTime == DateTime.fromMillisecondsSinceEpoch(0)
+              ? null
+              : vForStudentHome.entryTime,
     );
   }
 
   @override
   String toString() {
-    return 'StudentSection{date: $date, studentNumber: $studentNumber, sectionCode: $sectionCode, startTime: $startTime, endTime: $endTime, studentId: $studentId, block: $block}';
+    return 'StudentSection{date: $date, studentNumber: $studentNumber, sectionCode: $sectionCode, startTime: $startTime, endTime: $endTime, studentId: $studentId, entryTime: $entryTime,block: $block}';
   }
 
   // Sample data

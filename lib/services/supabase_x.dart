@@ -28,7 +28,7 @@ extension SupabaseX on Supabase {
         .map((vForStudentHome) => StudentSection.from(vForStudentHome))
         .toList();
     for (var studentSection in studentSections) {
-      log.info(studentSection.toString());
+      log.info(studentSection);
     }
     return studentSections;
   }
@@ -60,13 +60,14 @@ extension SupabaseX on Supabase {
     required String studentNumber,
     required DateTime scanTime,
   }) async {
+    final scanTimeUtcString = scanTime.toUtc().toIso8601String();
     try {
       final response = await Supabase.instance.client.functions.invoke(
         'tag_scan',
         body: {
           "studentNumber": studentNumber,
           "scannedTagUid": tagUid,
-          "scanTime": scanTime.toIso8601String(),
+          "scanTime": scanTimeUtcString,
         },
       );
 

@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "825249361550",
+    "project_id": "bara-flutter",
+    "storage_bucket": "bara-flutter.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:825249361550:android:4a2c324c67b515498e23df",
+        "android_client_info": {
+          "package_name": "ca.codepet.bara_flutter"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCu4rDSP6exu5DY-zZkp_vBVDZp-dJMdKQ"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

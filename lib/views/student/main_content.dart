@@ -20,9 +20,12 @@ class StudentMainContent extends StatelessWidget {
           SectionDetail(studentSection: currentSection!),
           SizedBox(height: 16),
         ] else if (upcomingSection != null) ...[
-          Text(
-            "Coming up...",
-            style: theme.textTheme.titleLarge,
+          Padding(
+            padding: const EdgeInsets.symmetric(vertical: 16.0),
+            child: Text(
+              "Coming up...",
+              style: theme.textTheme.titleLarge,
+            ),
           ),
           SectionDetail(studentSection: upcomingSection!),
           SizedBox(height: 16),

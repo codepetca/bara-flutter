@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'dart:typed_data';
+import 'dart:ui';
 
 import 'package:bara_flutter/main.dart';
 import 'package:bara_flutter/services/supabase_auth.dart';
@@ -73,58 +74,47 @@ class _StudentHomeState extends State<StudentHome> {
 
   // Show NFC scan modal when scanning
   void showScanModal(BuildContext context) {
-    // Show bottom sheet modal
     showModalBottomSheet(
       context: context,
-      isDismissible: true, // Allow users to cancel
-      enableDrag: false, // Prevent accidental dismiss
-      builder: (context) {
-        return Container(
-          padding: const EdgeInsets.all(20),
-          height: 200,
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              // const CircularProgressIndicator(),
-              const SizedBox(height: 16),
-              const Text('Hold your phone near the NFC tag',
-                  style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
-            ],
-          ),
-        );
-      },
-    );
-  }
-
-  // Show NFC scan dialog when scanning
-  void showScanDialog(BuildContext context) {
-    showDialog(
-      context: context,
-      barrierDismissible:
-          true, // Allow users to dismiss the dialog by tapping outside
+      isDismissible: true, // Allow dismissal by tapping outside
+      backgroundColor: Colors.transparent, // Makes blur effect visible
+      barrierColor: Colors.black.withValues(
+          alpha: 0.2, red: 0, green: 0, blue: 0), // Subtle dimming effect
       builder: (BuildContext context) {
-        return AlertDialog(
-          title: const Text('Scanning NFC Tag'),
-          content: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: const [
-              CircularProgressIndicator(),
-              SizedBox(height: 16),
-              Text(
-                'Hold your phone near the NFC tag',
-                style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+        return ClipRRect(
+          borderRadius: const BorderRadius.vertical(top: Radius.circular(16)),
+          child: BackdropFilter(
+            filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10), // Blur effect
+            child: Container(
+              padding: const EdgeInsets.all(20),
+              decoration: BoxDecoration(
+                color: Colors.black
+                    .withValues(alpha: 0.6, red: 0, green: 0, blue: 0),
+                borderRadius:
+                    const BorderRadius.vertical(top: Radius.circular(16)),
               ),
-            ],
-          ),
-          actions: <Widget>[
-            TextButton(
-              onPressed: () {
-                // Dismiss the dialog
-                Navigator.of(context).pop();
-              },
-              child: const Text('Cancel'),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  const Text(
+                    'Hold the top of your phone near the tag.',
+                    style: TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.white),
+                  ),
+                  const SizedBox(height: 16),
+                  const CircularProgressIndicator(color: Colors.white),
+                  const SizedBox(height: 20),
+                  TextButton(
+                    onPressed: () => Navigator.of(context).pop(),
+                    child: const Text('Cancel',
+                        style: TextStyle(color: Colors.white70)),
+                  ),
+                ],
+              ),
             ),
-          ],
+          ),
         );
       },
     );
@@ -139,8 +129,8 @@ class _StudentHomeState extends State<StudentHome> {
     }
 
     setState(() => _isScanning = true);
-    // showScanModal(context);
-    showDialog(context: context, builder: (context) => _NfcScanningDialog());
+    showScanModal(context);
+    // showDialog(context: context, builder: (context) => _NfcScanningDialog());
 
     log.info('Starting NFC reading...');
     NfcManager.instance.startSession(

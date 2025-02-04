@@ -23,7 +23,7 @@ extension SupabaseX on Supabase {
         .eq("date", dateString)
         .withConverter(VForStudentHome.converter);
 
-    log.info('vForStudentHomeList: $vForStudentHomeList');
+    log.info('vForStudentHomeList: ${vForStudentHomeList.first.startTime}');
     final studentSections = vForStudentHomeList
         .map((vForStudentHome) => StudentSection.from(vForStudentHome))
         .toList();

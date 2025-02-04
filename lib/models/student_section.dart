@@ -32,8 +32,8 @@ class StudentSection {
       studentNumber: vForStudentHome.studentNumber!,
       block: vForStudentHome.block!,
       sectionCode: vForStudentHome.sectionCode!,
-      startTime: vForStudentHome.startTime!.toToday(),
-      endTime: vForStudentHome.endTime!.toToday(),
+      startTime: vForStudentHome.startTime!.toTodaysDate(),
+      endTime: vForStudentHome.endTime!.toTodaysDate(),
       entryTime:
           vForStudentHome.entryTime == DateTime.fromMillisecondsSinceEpoch(0)
               ? null

@@ -28,9 +28,12 @@ class SupabaseService extends ChangeNotifier {
   List<TeacherStudent> get teacherStudents => _teacherStudents;
   DateTime get lastFetched => _lastFetched;
   DateTime get currentDate => _currentDate;
+
   // If the last fetch was not today, then we need to refetch
-  bool get requiresRefetch => currentDate.isAtSameMomentAs(
-      DateTime(lastFetched.year, lastFetched.month, lastFetched.day));
+  bool get requiresRefetch =>
+      currentDate.year != lastFetched.year ||
+      currentDate.month != lastFetched.month ||
+      currentDate.day != lastFetched.day;
 
   // ------------------------------
   // Setters for listenable states
@@ -149,6 +152,8 @@ class SupabaseService extends ChangeNotifier {
       return null;
     }
     for (var section in orderedStudentSectionsByStartTime) {
+      log.info(currentDate);
+      log.info(section.startTime);
       if (currentDate.isBefore(section.startTime)) {
         return section;
       }

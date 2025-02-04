@@ -1,8 +1,8 @@
 import 'package:intl/intl.dart';
 
 extension DateTimeX on DateTime {
-  DateTime toToday() {
-    final now = DateTime.now().toUtc();
+  DateTime toTodaysDate() {
+    final now = DateTime.now();
     final utcDateTime = DateTime.utc(
       now.year,
       now.month,

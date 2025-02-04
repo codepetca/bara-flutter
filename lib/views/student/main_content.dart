@@ -11,30 +11,52 @@ class StudentMainContent extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
+    if (currentSection != null) {
+      return _buildCurrentSection(context);
+    } else if (upcomingSection != null) {
+      return _buildUpcomingSection(context);
+    } else {
+      return _buildAllDone(context);
+    }
+  }
 
+  Widget _buildCurrentSection(BuildContext context) {
+    final theme = Theme.of(context);
     return Column(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
-        if (currentSection != null) ...[
-          SectionDetail(studentSection: currentSection!),
-          SizedBox(height: 16),
-        ] else if (upcomingSection != null) ...[
-          Padding(
-            padding: const EdgeInsets.symmetric(vertical: 16.0),
-            child: Text(
-              "Coming up...",
-              style: theme.textTheme.titleLarge,
-            ),
-          ),
-          SectionDetail(studentSection: upcomingSection!),
-          SizedBox(height: 16),
-        ] else ...[
-          Text(
-            "All done for today!",
+        SectionDetail(studentSection: currentSection!),
+      ],
+    );
+  }
+
+  Widget _buildUpcomingSection(BuildContext context) {
+    final theme = Theme.of(context);
+    return Column(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        Padding(
+          padding: const EdgeInsets.symmetric(vertical: 16.0),
+          child: Text(
+            "Coming up...",
             style: theme.textTheme.titleLarge,
           ),
-        ],
+        ),
+        SectionDetail(studentSection: upcomingSection!),
+        SizedBox(height: 16),
+      ],
+    );
+  }
+
+  Widget _buildAllDone(BuildContext context) {
+    final theme = Theme.of(context);
+    return Column(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        Text(
+          "All done for today!",
+          style: theme.textTheme.titleLarge,
+        ),
       ],
     );
   }

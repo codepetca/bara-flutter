@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:typed_data';
 
 import 'package:bara_flutter/main.dart';
@@ -139,6 +140,7 @@ class _StudentHomeState extends State<StudentHome> {
 
     setState(() => _isScanning = true);
     // showScanModal(context);
+    showDialog(context: context, builder: (context) => _NfcScanningDialog());
 
     log.info('Starting NFC reading...');
     NfcManager.instance.startSession(
@@ -182,8 +184,6 @@ class _StudentHomeState extends State<StudentHome> {
             di<SupabaseService>().fetchStudentSections(
               di<SupabaseAuth>().appUser!,
             );
-            // Update local scan status
-            // di<SupabaseService>().updateCurrentSectionEntryTime(scanTime);
           } else {
             log.warning('Failed to send scan.');
           }
@@ -206,5 +206,75 @@ class _StudentHomeState extends State<StudentHome> {
   void dispose() {
     NfcManager.instance.stopSession();
     super.dispose();
+  }
+}
+
+// Scan dialog
+class _NfcScanningDialog extends StatefulWidget {
+  @override
+  _NfcScanningDialogState createState() => _NfcScanningDialogState();
+}
+
+class _NfcScanningDialogState extends State<_NfcScanningDialog> {
+  int _gradientIndex = 0;
+  late Timer _timer;
+
+  final List<List<Color>> _gradients = [
+    [Colors.blue, Colors.purple],
+    [Colors.purple, Colors.red],
+    [Colors.red, Colors.orange],
+    [Colors.orange, Colors.blue],
+  ];
+
+  @override
+  void initState() {
+    super.initState();
+    _timer = Timer.periodic(Duration(seconds: 1), (timer) {
+      setState(() {
+        _gradientIndex = (_gradientIndex + 1) % _gradients.length;
+      });
+    });
+  }
+
+  @override
+  void dispose() {
+    _timer.cancel();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Dialog(
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+      child: AnimatedContainer(
+        duration: Duration(seconds: 1),
+        decoration: BoxDecoration(
+          gradient: LinearGradient(
+            colors: _gradients[_gradientIndex],
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
+          ),
+          borderRadius: BorderRadius.circular(12),
+        ),
+        padding: EdgeInsets.all(20),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Text(
+              "Scanning for NFC Tag...",
+              style: TextStyle(
+                  color: Colors.white,
+                  fontSize: 18,
+                  fontWeight: FontWeight.bold),
+            ),
+            SizedBox(height: 10),
+            Text(
+              "Hold your device near the tag",
+              style: TextStyle(color: Colors.white70, fontSize: 14),
+            ),
+          ],
+        ),
+      ),
+    );
   }
 }

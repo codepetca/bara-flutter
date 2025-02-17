@@ -1,7 +1,6 @@
 import 'package:bara_flutter/models/local_store.dart';
 import 'package:flutter/material.dart';
 import 'package:logging/logging.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 import 'package:watch_it/watch_it.dart';
 import 'package:url_launcher/url_launcher.dart';
 
@@ -25,7 +24,7 @@ class InfoView extends StatelessWidget {
           Padding(
             padding: const EdgeInsets.all(24.0),
             child: Text(
-              'Atttendance simplified.',
+              'Attendance simplified.',
             ),
           ),
           Padding(
